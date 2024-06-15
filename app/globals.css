@@ -2,32 +2,100 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+
+@layer base {
+
+    *,
+    html {
+        font-family: "Noto Sans", sans-serif;
+    }
+
+    textarea:focus,
+    input:focus {
+        @apply outline-primary;
+    }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-}
+@layer components {
+    .pp {
+        @apply pt-7 max-w-screen-xl w-full px-4
+    }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+    .animation {
+        animation: bounce 0.8s ease alternate !important;
+    }
+
+    @keyframes bounce {
+
+        0%,
+        20%,
+        53%,
+        to {
+            -webkit-animation-timing-function: cubic-bezier(.215, .61, .355, 1);
+            animation-timing-function: cubic-bezier(.215, .61, .355, 1);
+            -webkit-transform: translateZ(0);
+            transform: translateZ(0)
+        }
+
+        40%,
+        43% {
+            -webkit-animation-timing-function: cubic-bezier(.755, .05, .855, .06);
+            animation-timing-function: cubic-bezier(.755, .05, .855, .06);
+            -webkit-transform: translate3d(0, -30px, 0) scaleY(1.1);
+            transform: translate3d(0, -30px, 0) scaleY(1.1)
+        }
+
+        70% {
+            -webkit-animation-timing-function: cubic-bezier(.755, .05, .855, .06);
+            animation-timing-function: cubic-bezier(.755, .05, .855, .06);
+            -webkit-transform: translate3d(0, -15px, 0) scaleY(1.05);
+            transform: translate3d(0, -15px, 0) scaleY(1.05)
+        }
+
+        80% {
+            -webkit-transform: translateZ(0) scaleY(.95);
+            transform: translateZ(0) scaleY(.95);
+            -webkit-transition-timing-function: cubic-bezier(.215, .61, .355, 1);
+            transition-timing-function: cubic-bezier(.215, .61, .355, 1)
+        }
+
+        90% {
+            -webkit-transform: translate3d(0, -4px, 0) scaleY(1.02);
+            transform: translate3d(0, -4px, 0) scaleY(1.02)
+        }
+    }
 }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+    .p {
+        border-bottom: solid 1px;
+        @apply border-secondary
+    }
+
+    .transform-0 {
+        transform: rotateX(0deg);
+    }
+    .transform-180 {
+        transform: rotateX(180deg);
+    }
+    .y {
+        border-bottom: solid 2px;
+    }
+
+    .my-shadow {
+        box-shadow: 0 4px 80px hsla(0, 0%, 77%, .13), 0 1.6711px 33.4221px hsla(0, 0%, 77%, .09), 0 .893452px 17.869px hsla(0, 0%, 77%, .08), 0 .500862px 10.0172px hsla(0, 0%, 77%, .07), 0 .266004px 5.32008px hsla(0, 0%, 77%, .05), 0 .11069px 2.21381px hsla(0, 0%, 77%, .04);
+    }
+
+    .my-3d {
+        transform: rotateY(25deg) rotateX(-2deg);
+    }
+
+    .border-top {
+        border-top: solid 1px;
+    }
+
+    .border-bottom {
+        border-bottom: solid 1px;
+    }
 }
