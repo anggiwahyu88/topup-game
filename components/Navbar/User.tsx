@@ -6,8 +6,6 @@ import Link from "next/link";
 
 const NavUser = ({ user, isAdmin }: { user: any, isAdmin: boolean }) => {
 
-
-
     return (
         <header className="h-16 w-full my-shadow fixed z-20 bg-dark">
             <nav className="flex flex-col items-center h-full">

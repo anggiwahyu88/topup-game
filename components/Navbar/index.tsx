@@ -1,23 +1,17 @@
-"use client"
+import { createClient } from "@/utils/supabase/server";
+import Content from "./Content";
 
-import { usePathname } from "next/navigation";
-import NavUser from "./User";
-import NavAdmin from "./Admin";
-import { User } from "@supabase/supabase-js";
+const Navbar = async () => {
+    const supabase = createClient()
 
-const Navbar= ({user,isAdmin}:{user:User|null,isAdmin:boolean}) => {
-    const pathname = usePathname()
-
+    const {
+        data: { user },
+    } = await supabase.auth.getUser();
+    let response
+    if (user) response = await supabase.from("user").select("role").eq("id", user?.id).single()
     return (
-        <>
-            {
-                pathname === "/dashboard" ?
-                    <NavAdmin />
-                    :
-                    <NavUser user={user} isAdmin={isAdmin}/>
-            }
-        </>
-    );
+        <Content  user={user} isAdmin={response?.data?.role =="admin"||false}/>
+    )
 }
 
 export default Navbar;
