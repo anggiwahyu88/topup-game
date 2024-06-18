@@ -34,7 +34,7 @@ const Page = async () => {
   const product_nonAktif = await getAllProduct_nonAktif("code")
 
   return (
-    <div className="pp">
+    <div className="pp ml-16">
       <section >
         <div className="relative overflow-x-auto shadow-md sm:rounded-lg grid">
           <Table logo={data} defaultImageLogo={logoProduct.data} data={result} product_nonAktif={product_nonAktif} games={games} />

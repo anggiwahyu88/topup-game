@@ -29,7 +29,7 @@ const Page: React.FC = async () => {
     const countCategory = await getCount('category')
 
     return (
-        <div className='pp'>
+        <div className='pp ml-16'>
             <section className='grid grid-cols-4 gap-4 justify-center mb-8 mt-4'>
                 <Link href={"/dashboard/game"} className='bg-gray-800 p-6 flex w-min mx-auto'>
                     <div>

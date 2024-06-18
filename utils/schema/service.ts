@@ -1,7 +1,7 @@
 type ValidSchema = { valid: boolean, errors: null };
 type InvalidSchema = { valid: boolean; errors: { [key: string]: string; }; };
 
-import { CategorySchema, GameSchema, LoginSchema, ProductSchema, SignupSchema } from ".";
+import { GameSchema, LoginSchema, PriceSchema, SignupSchema, VoucherSchema } from ".";
 
 export const checkValidationLogin = async (props: { email: string, password: string }) => {
     try {
@@ -54,31 +54,6 @@ export const checkValidationSignup = async (props: { email: string, password: st
     }
 }
 
-export const checkValidationProduct = async (props: { amount: number, price: number }) => {
-    try {
-        await ProductSchema.validate({
-            amount: Number(props.amount),
-            price: Number(props.price)
-        }, { abortEarly: false, strict: true })
-        return {
-            valid: true,
-            errors: null
-        } as ValidSchema
-    }
-    catch (err: any) {
-        const errorObj: { [key: string]: string } = {};
-        err.inner.forEach((error: any) => {
-            if (error.path) {
-                errorObj[error.path] = error.message;
-            }
-        });
-        return {
-            valid: false,
-            errors: errorObj
-        } as InvalidSchema;
-    }
-}
-
 export const checkValidationGame = async (props: { name: string, developer: string, descripsion: string, name_provider: string, image: File, preview: string, description_instructions: string, check_id: string, isCheck_id: any, status: any, server_list: string, zone_id: any }) => {
     try {
         await GameSchema.validate({
@@ -103,10 +78,41 @@ export const checkValidationGame = async (props: { name: string, developer: stri
     }
 }
 
-export const checkValidationCategory = async (props: { name: string, image: File | null, preview: string }) => {
+export const checkValidationPrice = async (props: { basic: number, reseller: number, vip: number }) => {
     try {
-        await CategorySchema.validate({
-            name: props.name, image: props.image, preview: props.preview
+        await PriceSchema.validate({
+            basic: props.basic,
+            reseller: props.reseller,
+            vip: props.vip,
+        }, { abortEarly: false, strict: true })
+        return {
+            valid: true,
+            errors: null
+        } as ValidSchema
+    }
+    catch (err: any) {
+        const errorObj: { [key: string]: string } = {};
+        err.inner.forEach((error: any) => {
+            if (error.path) {
+                errorObj[error.path] = error.message;
+            }
+        });
+        return {
+            valid: false,
+            errors: errorObj
+        } as InvalidSchema;
+    }
+}
+
+export const checkValidationVoucher = async (props: { code: string, discount: number|null, min_spen: number | null, max_dicont: number | null, exp: Date | null, max_usage: number | null }) => {
+    try {
+        await VoucherSchema.validate({
+            code: props.code,
+            discount: props.discount,
+            min_spen: props.min_spen,
+            max_dicont: props.max_dicont,
+            exp: props.exp,
+            max_usage: props.max_usage,
         }, { abortEarly: false, strict: true })
         return {
             valid: true,

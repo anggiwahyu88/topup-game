@@ -1,47 +1,54 @@
 "use client"
 
-import { useFormState } from "react-dom";
-import { SubmitButton } from "../Form/SubmitButton";
-import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import Input from "../Form/Input";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import { SubmitButton } from "../Form/SubmitButton";
+import { useFormState } from "react-dom";
 import { add, update } from "./_action";
-import { Game } from "@/utils/type";
-import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
+import { GameType } from "@/utils/type";
 
 interface Modal {
     handleClose: any,
-    defaultValue?: Game | null,
+    defaultValue?: GameType | null,
     game: []
-    title: string,
-    pandingText: string,
     defaultImageUrl?: string | null,
+    setGames: React.Dispatch<React.SetStateAction<GameType[] | null>>
 }
 
-const FormGameModal: React.FC<Modal> = ({ handleClose, defaultValue, title, pandingText, defaultImageUrl, game }) => {
+const FormGameModal: React.FC<Modal> = ({ handleClose, defaultValue, defaultImageUrl, game, setGames }) => {
     const defaultIsCheckId = defaultValue?.check_id ? true : false
     const action = defaultValue ? update : add
     const initialState = defaultValue ? { id: defaultValue.id, image_name: defaultValue.image_name } : null
+    const pendingText = defaultValue ? "Update" : "Add"
+    const title = defaultValue ? "Update" : "Add"
     const [state, formAction] = useFormState<any, FormData>(action, initialState)
     const [imageUrl, setimageUrl] = useState<string | null>(defaultImageUrl || null);
     const [imageValue, setImageValue] = useState("")
     const [isCheckId, setIsCheckId] = useState<boolean>(defaultIsCheckId)
     const [isStatus, setIsStatus] = useState<boolean>(defaultValue?.status || false)
     const [isZoneId, setIsZoneId] = useState<boolean>(defaultValue?.zone_id || false)
-    const router = useRouter()
 
-    useEffect(() => {        
+    useEffect(() => {
         if (state?.errors?.users) {
             toast.error(state.errors.users)
         }
         if (state?.valid) {
-            router.refresh()
+            if (defaultValue) {
+                setGames(prev => {
+                    if (prev == null) return null
+                    return prev.map(game => game.id == defaultValue.id ? state.data : game)
+                })
+                toast.success(defaultValue.name + " has been updated")
+            } else {
+                setGames((prev) => prev ? [...prev, state.data] : [state.data])
+                toast.success("Game has been added")
+            }
             handleClose()
-            toast.success("upload succses")
         }
 
-    }, [state, handleClose, router])
+    }, [state, handleClose,setGames, defaultValue])
 
     const handleFileChange = (e: React.ChangeEvent) => {
         const file = (e.target as HTMLInputElement).files?.[0] || null;
@@ -221,7 +228,7 @@ const FormGameModal: React.FC<Modal> = ({ handleClose, defaultValue, title, pand
                             <SubmitButton
                                 formAction={formAction}
                                 className="bg-primary text-dark rounded-md px-4 py-2 text-foreground mb-2"
-                                pendingText={pandingText}
+                                pendingText={pendingText}
                             >
                                 {title}
                             </SubmitButton>

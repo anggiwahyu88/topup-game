@@ -15,7 +15,7 @@ export const getAllGamesActive = async (select: string) => {
     const { data } = await supabase
         .from("game")
         .select(select as "*")
-        .eq("status", true);        
+        .eq("status", true);
     return data
 }
 
@@ -53,15 +53,15 @@ export const uploadGame = async (props: { name: string, developer: string, descr
     const filename = getFileName(image.type.split("/")[1] || "");
     const path = props?.name.toLowerCase().replace(/\s+/g, '-');
 
-    const { error: insertError } = await supabase
+    const { error: insertError, data: insertData } = await supabase
         .from('game')
-        .insert({ ...data, image_name: filename, path });
+        .insert({ ...data, image_name: filename, path }).select().single();
 
     if (insertError) {
         return { error: insertError }
     }
 
-    const { error: uploadError, data: uploadData } = await supabase
+    const { error: uploadError } = await supabase
         .storage
         .from('image')
         .upload(`game/${filename}`, props.image, {
@@ -72,35 +72,44 @@ export const uploadGame = async (props: { name: string, developer: string, descr
     if (uploadError) {
         return { error: uploadError }
     }
-    return { error: null }
+    return { error: null, data: insertData }
 }
 
 export const updateGameById = async (props: { name: string, developer: string, descripsion: string, name_provider: string, image: File, description_instructions: string, check_id: string, status: boolean, server_list: string, zone_id: boolean, image_name: string, id: number }) => {
     const { image, id, ...data } = props;
     const supabase = createClient();
-    const filename = getFileName(image.type.split("/")[1] || "");
     const path = props?.name.toLowerCase().replace(/\s+/g, '-');
+    let filename = props.image_name;
+    if (image.size > 0) {
+        filename = getFileName(image.type.split("/")[1] || "");
+        const [deleteImage, uploadImage] = await Promise.all([
+            supabase
+                .storage
+                .from('image')
+                .remove([`game/${props.image_name}`]),
+            supabase
+                .storage
+                .from('image')
+                .upload(`game/${filename}`, props.image, {
+                    cacheControl: '3600',
+                    upsert: false
+                })
+        ])
+        if (deleteImage.error) {
+            return { error: deleteImage.error }
+        }
+        if (uploadImage.error) {
+            return { error: uploadImage.error }
+        }
+    }
 
-    const { error: insertError } = await supabase
+    const { error: updateError, data: updateData } = await supabase
         .from('game')
-        .insert({ ...data, image_name: filename, path });
-
-    if (insertError) {
-        return { error: insertError }
+        .update({ ...data, image_name: filename, path }).eq('id', id).select().single();
+    if (updateError) {
+        return { error: updateError }
     }
-
-    const { error: uploadError, data: uploadData } = await supabase
-        .storage
-        .from('image')
-        .upload(`game/${filename}`, props.image, {
-            cacheControl: '3600',
-            upsert: false
-        });
-
-    if (uploadError) {
-        return { error: uploadError }
-    }
-    return { error: null }
+    return { error: null, data: updateData }
 }
 
 export const getAllProduct_nonAktif = async (select: string) => {
@@ -135,6 +144,6 @@ export const getAllPaymets = async (select: string) => {
         .from("payment")
         .select(select as "*")
         .eq("status", true);
-    
+
     return data
 }

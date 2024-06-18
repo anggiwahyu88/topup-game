@@ -20,8 +20,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <Navbar/>
       <body className="bg-dark">
+      <Navbar/>
         <main className="min-h-screen flex flex-col items-center pt-20">
           <Toaster />
           {children}

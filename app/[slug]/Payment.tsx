@@ -17,7 +17,7 @@ type Props = {
     handleClickPayment: React.Dispatch<React.SetStateAction<{
         id: number,
         type: string,
-        fee:string
+        fee: string
     }>>,
     type: {
         id: number,
@@ -32,15 +32,15 @@ type Props = {
 
 const Payment = ({ title, handleClickPaymentCategory, isSelectPaymentCategory, isPayment, handleClickPayment, type, price }: Props) => {
     const id = useId()
-    const changePayment = (data: { name: string, id: number,fee:string }) => {
+    const changePayment = (data: { name: string, id: number, fee: string }) => {
         handleClickPayment((prev) => prev.id == data.id ? {
             id: 0,
             type: "",
-            fee:""
+            fee: ""
         } : {
             id: data.id,
             type: data.name,
-            fee:data.fee
+            fee: data.fee
         })
     }
     return (
@@ -56,18 +56,18 @@ const Payment = ({ title, handleClickPaymentCategory, isSelectPaymentCategory, i
                     <div className="relative z-50 grid grid-cols-2 gap-4 md:grid-cols-3 py-3 ">
                         {
                             type?.map((data, i) => {
-                                const fee = calculateFee(price,data.fee)
+                                const fee = calculateFee(price, data.fee)
                                 return (
                                     <div
                                         key={i}
                                         onClick={() => changePayment(data)}
                                         className={`cursor-pointer px-4 py-2 rounded-xl ring-primary transition-all duration-300 ring-2 ${isPayment.id == data.id ? "bg-white ring-offset-[3px] ring-offset-whbg-white" : "ring-offset-slate-300 bg-slate-300 ring-offset-[-2px]"}`}>
-                                        <Image src={`/${data.image_name}`} alt={data.name} width={0} height={0} className="w-auto max-w-60 h-8 mr-auto" sizes="100vw" />
+                                        <Image src={`/${data.image_name}`} alt={data.name} width={0} height={0} className="max-w-full w-auto max-h-8 mr-auto" sizes="100vw" />
                                         <div className="text-black mt-3">
-                                            <span>
-                                                Rp {(price+fee).toLocaleString('id-ID')},-
+                                            <span className="md:text-base text-sm">
+                                                Rp {(price + fee).toLocaleString('id-ID')},-
                                             </span>
-                                            <div className="italic border-t-2 border-gray-800 w-full mt-2 text-gray-700 text-sm">
+                                            <div className="italic border-t-2 border-gray-800 w-full mt-2 text-gray-700 text-xs md:text-sm">
                                                 <span>
                                                     proses otomatis
                                                 </span>
@@ -81,10 +81,10 @@ const Payment = ({ title, handleClickPaymentCategory, isSelectPaymentCategory, i
                     </div>
                 </div>
             </div>
-            <div className="bg-gray-100 rounded-b-lg px-2 py-1 md:px-3 md:py-2 cursor-pointer flex justify-end gap-4" onClick={() => handleClickPaymentCategory(id)}>
+            <div className="bg-gray-100 h-9 rounded-b-lg px-2 py-1 md:px-3 md:py-2 cursor-pointer flex justify-end items-center gap-2 md:gap-4 " onClick={() => handleClickPaymentCategory(id)}>
                 {type?.map((payment, i: number) => {
                     return (
-                        <Image key={i} src={`/${payment.image_name}`} alt={payment.name} width={0} height={0} className={`w-auto max-w-60 h-8 transition-all duration-500 delay-400 ${id == isSelectPaymentCategory.id || id == isSelectPaymentCategory.prevId ? "opacity-0" : "opacity-100"}`} sizes="100vw" />
+                        <Image key={i} src={`/${payment.image_name}`} alt={payment.name} width={0} height={0} className={`max-h-8 h-min w-auto transition-all duration-500 delay-400 ${id == isSelectPaymentCategory.id || id == isSelectPaymentCategory.prevId ? "opacity-0" : "opacity-100"}`} sizes="100vw" style={{maxWidth: `calc(90%/${type.length})`}}/>
                     )
                 })}
             </div>

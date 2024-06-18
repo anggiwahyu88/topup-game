@@ -1,4 +1,4 @@
-export type Game = {
+export type GameType = {
     id: number,
     created_at: string,
     name: string,
@@ -76,3 +76,13 @@ export type PaymentType = {
         fee: string,
     }[]
 }
+
+export type VoucherType={
+    id:number,
+    code:string,
+    discount:number,
+    min_spen:number,
+    max_dicont:number,
+    exp:string,
+    max_usage:number
+}   

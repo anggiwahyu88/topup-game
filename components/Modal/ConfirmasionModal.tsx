@@ -21,10 +21,11 @@ interface Modal {
         name: string;
         price: number;
     },
-    game_id:number
+    game_id: number,
+    discount: number
 }
 
-const ConfirmasionModal: React.FC<Modal> = ({ handleClose, user_id, phone, username, zone_id, product, payment, game_id, server }) => {
+const ConfirmasionModal: React.FC<Modal> = ({ handleClose, user_id, phone, username, zone_id, product, payment, game_id, server, discount }) => {
     const router = useRouter()
 
     const checkOut = async () => {
@@ -51,7 +52,7 @@ const ConfirmasionModal: React.FC<Modal> = ({ handleClose, user_id, phone, usern
                     ...item,
                     id: product.code,
                     name: product.name,
-                    price: product.price,
+                    price: (fee + product.price) - discount,
                 },
                 phone,
                 payment_id: payment.id,
@@ -70,7 +71,7 @@ const ConfirmasionModal: React.FC<Modal> = ({ handleClose, user_id, phone, usern
     const fee = calculateFee(product.price, payment.fee)
 
     return (
-        <div id="popup-modal" tabIndex={- 1} className={`overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 max-h-full text-white tracking-wide`} style={{ background: "rgba(0, 0, 0, 0.4)" }} >
+        <div id="popup-modal" tabIndex={- 1} className={`overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full inset-0 max-h-full text-white tracking-wide`} style={{ background: "rgba(0, 0, 0, 0.4)" }} >
             <div className="relative w-full max-w-2xl max-h-full left-[50%] top-[50%]" style={{ transform: "translate(-50%, -50%)" }}>
                 <div className="rounded-lg shadow bg-gray-700 p-4">
                     <div>
@@ -91,6 +92,12 @@ const ConfirmasionModal: React.FC<Modal> = ({ handleClose, user_id, phone, usern
                                 <p>ZONE ID</p>
                                 <p className="font-bold">{zone_id}</p>
                             </div> : ""}
+                            {
+                                server ? <div className="w-full flex justify-between mt-1">
+                                    <p>Server</p>
+                                    <p className="font-bold">{server}</p>
+                                </div> : ""
+                            }
                             {username ? <div className="w-full flex justify-between mt-1">
                                 <p>USERNAME</p>
                                 <p className="font-bold">{username}</p>
@@ -112,13 +119,20 @@ const ConfirmasionModal: React.FC<Modal> = ({ handleClose, user_id, phone, usern
                                 <p>Fee</p>
                                 <p className="font-bold">Rp {fee.toLocaleString('id-ID')},-</p>
                             </div>
+                            {
+                                discount ?
+                                    <div className="w-full flex justify-between mt-1 text-green-400">
+                                        <p>Potongan Harga</p>
+                                        <p className="font-bold">- Rp {discount.toLocaleString('id-ID')},-</p>
+                                    </div> : ""
+                            }
                             <div className="w-full flex justify-between mt-1">
                                 <p>Sistem Pembayaran</p>
                                 <p className="font-bold">{payment.type}</p>
                             </div>
                             <div className="w-full flex justify-between mt-1">
                                 <p>Total Pembayaran</p>
-                                <p className="font-bold">Rp {(fee + product.price).toLocaleString('id-ID')},-</p>
+                                <p className="font-bold">Rp {((fee + product.price) - discount).toLocaleString('id-ID')},-</p>
                             </div>
                         </div>
                     </div>

@@ -20,19 +20,6 @@ export const LoginSchema = Yup.object().shape({
         .required('Password harus di isi')
 });
 
-export const ProductSchema = Yup.object().shape({
-    amount: Yup.number()
-        .required('Jumlah mata uang game harus di isi')
-        .positive('Jumlah mata uang game harus bernilai positive'),
-    price: Yup.number()
-        .required('Harga harus di isi')
-        .positive('Harga harus bernilai positive')
-        .test('no-leading-zero', 'Harga tidak boleh dimulai dari nol', value => {
-            if (value === undefined || value === null) return true;
-            return !/^0/.test(value.toString());
-        })
-});
-
 const FILE_SIZE = 1 * 1024 * 1024;
 const SUPPORTED_FORMATS = ['image/jpg', 'image/jpeg', 'image/png', 'image/webp'];
 
@@ -96,33 +83,23 @@ export const GameSchema = Yup.object().shape({
     server_list: Yup.string().nullable()
 });
 
-export const CategorySchema = Yup.object().shape({
-    name: Yup.string()
-        .required('Nama game harus di isi'),
-    preview: Yup.string().required("gambar harus di isi"),
-    image: Yup.mixed().nullable()
-        .when("preview", (preview, schema) => {
-            if (preview[0] > 0 && preview[0] != "default")
-                return schema.test(
-                    'fileSize',
-                    'File tidak boleh lebih dari 1Mb',
-                    (value) => {
-                        if (value instanceof File) {
-                            return value.size <= FILE_SIZE;
-                        }
-                        return false;
-                    }
-                )
-                    .test(
-                        'fileFormat',
-                        'Harap masukan file dengan format png,jpeg,jpg,webp',
-                        (value) => {
-                            if (value instanceof File) {
-                                return SUPPORTED_FORMATS.includes(value.type);
-                            }
-                            return false;
-                        }
-                    )
-            return schema
-        }),
+export const PriceSchema = Yup.object().shape({
+    basic: Yup.number()
+        .positive("Harus bernilai positive")
+        .required('Harus di isi'),
+    reseller: Yup.number()
+        .positive("Harus bernilai positive")
+        .required('Harus di isi'),
+    vip: Yup.number()
+        .positive("Harus bernilai positive")
+        .required('Harus di isi'),
+});
+
+export const VoucherSchema = Yup.object().shape({
+    code: Yup.string().required("Kode harus di isi"),
+    discount: Yup.number().positive("Diskon harus bernilai positive").required("Diskon harus di isi"),
+    min_spen: Yup.number().positive("Minimal Pembelian harus bernilai positive").nullable(),
+    max_dicont: Yup.number().positive("Maximal Harga harus bernilai positive").nullable(),
+    exp: Yup.date().nullable(),
+    max_usage: Yup.number().positive("Maximal Pemakaian harus bernilai positive").nullable(),
 });
