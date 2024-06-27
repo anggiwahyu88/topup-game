@@ -1,43 +1,44 @@
-import { getAllGames, getAllProduct_nonAktif, getURLImage } from "@/utils/supabase/service";
-import { getAllProduct } from "@/utils/api/service";
-import { createClient } from "@/utils/supabase/server";
+import ProductDasboard from "./ProductDasboard";
 import Table from "./Table";
+import { getAllProduct_nonAktif } from "@/utils/supabase/service";
+import { createClient } from "@/utils/supabase/server";
 
+type Props = {
+  searchParams: {
+    search: string,
+    page: string,
+    game_id: string,
+  }
+}
 
-const Page = async () => {
-  const games = await getAllGames("id, name,name_provider")
-  const product = await getAllProduct()
+const Page = async ({ searchParams }: Props) => {
   const supabase = createClient()
-  const { data } = await supabase
-    .storage
-    .from('image')
-    .list('logo', {
-      limit: 100,
-      offset: 0,
-      sortBy: { column: 'name', order: 'asc' },
-    })
-  const logoProduct = await supabase.from("logo product").select("name_image, name_product,game_id")
+  const query = `search=${searchParams?.search || ""}&page=${searchParams?.page || ""}&game=${searchParams?.game_id || ""}`
 
-  const gameMap = new Map(games?.map(game => [game.name_provider, game.id]));
-
-  const result = product
-    ?.filter(item => gameMap.has(item.game))
-    .map(item => ({
-      game_id: gameMap.get(item.game) ?? 0,
-      code: item.code,
-      game: item.game,
-      name: item.name,
-      price: item.price,
-      server: item.server,
-      status: item.status
-    })) || null;
-  const product_nonAktif = await getAllProduct_nonAktif("code")
+  const [response, images, logoProduct, product_nonAktif] = await Promise.all([
+    fetch(`${process.env.NEXT_PUBLIC_URL}/api/product?${query}`, {
+      cache: "no-store"
+    }),
+    supabase
+      .storage
+      .from('image')
+      .list('logo', {
+        limit: 100,
+        offset: 0,
+        sortBy: { column: 'name', order: 'asc' },
+      }),
+    supabase.from("logo product").select("name_image, name_product,game_id"),
+    getAllProduct_nonAktif("code")
+  ])
+  const product = await response.json()
 
   return (
     <div className="pp ml-16">
       <section >
         <div className="relative overflow-x-auto shadow-md sm:rounded-lg grid">
-          <Table logo={data} defaultImageLogo={logoProduct.data} data={result} product_nonAktif={product_nonAktif} games={games} />
+          <ProductDasboard data={product.data} games={product.games} maxData={product.count}>
+            <Table logo={images.data} defaultImageLogo={logoProduct.data} product_nonAktif={product_nonAktif} />
+          </ProductDasboard>
         </div>
       </section>
     </div>

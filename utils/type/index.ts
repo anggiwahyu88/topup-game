@@ -47,24 +47,29 @@ type BaseResponse = {
     expiry_time: string;
 };
 
-type Action = {
+type ActionQris = {
     name: string;
     method: string;
     url: string;
 };
+
+type ActionBank = {
+    bank: string,
+    va_number: string
+}
 
 export type ResponseQris = BaseResponse & {
     merchant_id: string;
     gross_amount: number; // Ensuring the correct type for this specific field
     currency: string;
     acquirer: string;
-    actions: Action[];
+    actions: ActionQris[];
 };
 
 export type ResponseBank = BaseResponse & {
     gross_amount: string;
     permata_va_number: string;
-    va_numbers: { bank: string, va_number: string }[]
+    va_numbers: ActionBank[]
 };
 
 export type PaymentType = {
@@ -77,12 +82,38 @@ export type PaymentType = {
     }[]
 }
 
-export type VoucherType={
-    id:number,
-    code:string,
-    discount:number,
-    min_spen:number,
-    max_dicont:number,
-    exp:string,
-    max_usage:number
-}   
+export type VoucherType = {
+    id: number,
+    code: string,
+    discount: number,
+    min_spen: number,
+    max_dicont: number,
+    exp: string,
+    max_usage: number
+}
+
+type CustomerDetail = {
+    item: {
+        id: string,
+        name: string,
+        price: number,
+        user_id: string,
+        zone_id?: string,
+        username?: string
+        server?: string
+    },
+    phone: string
+}
+
+export type TransactionType = {
+    id: string;
+    created_at: string;
+    game_id: number;
+    status_transaction: string;
+    payment_id: number;
+    customer_detail: CustomerDetail;
+    order_id: string;
+    transaction_id: string;
+    exp: string;
+    action: ActionQris[] | ActionBank[];
+};

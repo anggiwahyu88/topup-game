@@ -6,57 +6,31 @@ import AddButton from "@/components/Button/AddButton";
 import Image from "next/image";
 import { LogoData, ProductType } from "@/utils/type";
 import { useState } from "react";
-import Pagination from "./Pagination";
-import SerachInput from "@/components/Form/SerachInput";
-import DropDown from "../drop-down";
-import UploadButton from "@/components/Button/UploadButton";
 
 type Props = {
-    defaultImageLogo: LogoData[] | null,
-    logo: any,
-    data: ProductType[] | null,
+    products?: ProductType[] | null,
     product_nonAktif: {
         product_name: string
     }[] | null,
-    games: {
-        name: string,
-        id: number
-    }[] | null
-};
+    defaultImageLogo: LogoData[] | null,
+    logo: any
+}
 
-const Table = ({ logo, defaultImageLogo, data, product_nonAktif, games }: Props) => {
+const Table = ({ products, product_nonAktif, defaultImageLogo, logo }: Props) => {
+    const [imageLogo, setImageLogo] = useState<LogoData[] | null>(defaultImageLogo);
+    const [defaultImage, setDefaultImage] = useState<string>("");
     const [modal, setModal] = useState({
         name_product: "",
         game_id: 0,
         onModal: false
     });
-    const [imageLogo, setImageLogo] = useState<LogoData[] | null>(defaultImageLogo);
-    const [defaultImage, setDefaultImage] = useState<string>("");
-    const [page, setPage] = useState<number>(1)
-    const indexOfLastItem = page * 20;
-    const indexOfFirstItem = indexOfLastItem - 20;
-    const [products, setProducts] = useState(data)
-    const currentItems = products?.slice(indexOfFirstItem, indexOfLastItem);
-
-    const handleFilter = (id: number) => {
-        if (id != 0) {
-            const dataFilter = data?.filter((product) => product.game_id == id) || null
-            setProducts(dataFilter)
-        } else {
-            setProducts(data)
-        }
-    }
 
     return (
         <>
             {modal.onModal ?
                 <SelectLogoModal name_product={modal.name_product} handleClose={() => setModal({ name_product: "", onModal: false, game_id: 0 })} logo={logo} game_id={modal.game_id} setImageLogo={setImageLogo} devaultImage={defaultImage} clearDevaultImage={() => setDefaultImage("")} />
                 : ""}
-            <div className="pb-4 w-full flex items-center gap-4">
-                <SerachInput />
-                <DropDown games={games} handleFilter={handleFilter} resetPage={() => setPage(1)} />
-                <UploadButton />
-            </div>            <table className="w-full text-sm text-left rtl:text-right text-gray-400">
+            <table className="w-full text-sm text-left rtl:text-right text-gray-400">
                 <thead className="uppercase bg-gray-700 text-gray-400 text-xs">
                     <tr>
                         <th scope="col" className="px-2 py-3 text-center w-28">
@@ -75,7 +49,7 @@ const Table = ({ logo, defaultImageLogo, data, product_nonAktif, games }: Props)
                 </thead>
                 <tbody>
                     {
-                        currentItems?.map((product, i: number) => {
+                        products?.map((product, i: number) => {
                             const dataToggle = {
                                 name_product: product.name,
                                 game_id: product.game_id
@@ -88,7 +62,7 @@ const Table = ({ logo, defaultImageLogo, data, product_nonAktif, games }: Props)
                             const logoProduct = imageLogo?.find((image) => image.name_product === product.name)
 
                             if (product.name == logoProduct?.name_product) {
-                                url = `${process.env.NEXT_PUBLIC_IMAGE_URL}logo/${logoProduct.name_image}`
+                                url = `${process.env.NEXT_PUBLIC_IMAGE_URL}logo/${logoProduct?.name_image}`
                             }
                             return (
                                 <tr className="odd:bg-gray-900 even:bg-gray-800 border-b border-gray-700" key={i}>
@@ -138,7 +112,7 @@ const Table = ({ logo, defaultImageLogo, data, product_nonAktif, games }: Props)
                     }
                 </tbody>
             </table>
-            <Pagination page={page} setPage={setPage} maxData={products?.length || 0} />
+
         </>
     );
 }

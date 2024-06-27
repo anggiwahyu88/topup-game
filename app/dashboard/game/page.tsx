@@ -1,10 +1,10 @@
-import { getAllGames } from "@/utils/supabase/service";
 import Table from "./Table";
 
-const Page = async () => {
-    const data = await getAllGames("*")
+const Page = async ({ searchParams }: { searchParams: { search: string } }) => {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/game?search=${searchParams?.search || ""}`)
+    const data = await response.json()
 
-    const api = await fetch("http://localhost:3000/api/game")
+    const api = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/game/provider`)
     const games = await api.json()
 
     return (

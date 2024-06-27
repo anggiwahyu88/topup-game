@@ -12,6 +12,7 @@ export const getAllProduct = async (game = "") => {
     const response = await fetch("https://vip-reseller.co.id/api/game-feature", {
         method: "POST",
         body: formData,
+        cache: "no-store"
     })
     type response = {
         result: boolean,
@@ -22,8 +23,8 @@ export const getAllProduct = async (game = "") => {
     if (!responseData.result) {
         console.error(responseData.message)
         return null
-    }    
+    }
     const dataFilter = filterUniqueProduct(responseData?.data)
-    
+
     return dataFilter
 }

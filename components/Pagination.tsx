@@ -3,13 +3,12 @@
 type Props = {
     maxData: number;
     page: number;
-    setPage: React.Dispatch<React.SetStateAction<number>>
+    setPage: (page: number) => void
 }
 
 const Pagination = ({ maxData, page, setPage }: Props) => {
     const pageNumbers = [];
-
-    for (let i = 1; i <= Math.ceil(maxData / 20); i++) {
+    for (let i = 1; i <= Math.ceil(maxData / 10); i++) {
         pageNumbers.push(i);
     }
     const lastPage = pageNumbers[pageNumbers.length - 1];
@@ -17,13 +16,13 @@ const Pagination = ({ maxData, page, setPage }: Props) => {
     return (
         <nav className="flex items-center flex-column flex-wrap md:flex-row justify-between pt-4" aria-label="Table navigation">
             <span className="text-sm font-normal text-gray-400 mb-4 md:mb-0 block w-full md:inline md:w-auto">
-                Showing <span className="font-semibold text-white">{`${(page - 1) * 20 + 1} - ${page == lastPage ? `${maxData}` : `${page * 20}`}`}</span> of <span className="font-semibold text-white">{maxData}</span>
+                Showing <span className="font-semibold text-white">{`${(page - 1) * 1 + 1} - ${page == lastPage ? `${maxData}` : `${page * 1}`}`}</span> of <span className="font-semibold text-white">{maxData}</span>
             </span>
             <ul className="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">
                 {
                     page != 1 ?
                         <li>
-                            <button disabled={page == 1} onClick={() => setPage((prev) => prev - 1)} className=" text-gra flex items-center justify-center px-3 h-8 ms-0 leading-tight border rounded-s-lg bg-gray-800 border-gray-700 text-gray-400 hover:bg-gray-700 hover:text-white">
+                            <button disabled={page == 1} onClick={() => setPage(page - 1)} className=" text-gra flex items-center justify-center px-3 h-8 ms-0 leading-tight border rounded-s-lg bg-gray-800 border-gray-700 text-gray-400 hover:bg-gray-700 hover:text-white">
                                 Previous
                             </button>
                         </li>
@@ -79,7 +78,7 @@ const Pagination = ({ maxData, page, setPage }: Props) => {
                 {
                     page != lastPage ?
                         <li>
-                            <button disabled={page == lastPage} onClick={() => setPage((prev) => prev + 1)} className=" flex items-center justify-center px-3 h-8 leading-tight border rounded-e-lg bg-gray-800 border-gray-700 text-gray-400 hover:bg-gray-700 hover:text-white">
+                            <button disabled={page == lastPage} onClick={() => setPage(page + 1)} className=" flex items-center justify-center px-3 h-8 leading-tight border rounded-e-lg bg-gray-800 border-gray-700 text-gray-400 hover:bg-gray-700 hover:text-white">
                                 Next
                             </button>
                         </li> : ""

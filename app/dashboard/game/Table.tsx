@@ -8,7 +8,8 @@ import SerachInput from "@/components/Form/SerachInput"
 import FormGameModal from "@/components/Modal/FormGameModal"
 import { GameType } from "@/utils/type"
 import Image from "next/image"
-import { useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+import {  useState } from "react"
 
 type Props = {
     gamesProvider: [],
@@ -20,6 +21,9 @@ const Table = ({ data, gamesProvider }: Props) => {
     const [gameEdit, setGameEdit] = useState<GameType | null>(null)
     const [defaultImageUrl, setDefaultImageUrl] = useState<string>("")
     const [games, setGames] = useState<GameType[] | null>(data)
+    const router = useRouter()
+    const searchParams = useSearchParams()
+    const searchParam = searchParams?.get("search") || ""
 
     const handleClose = () => {
         setModal(false)
@@ -33,10 +37,22 @@ const Table = ({ data, gamesProvider }: Props) => {
         })
     }
 
+
+    const getData = async ({ searchParam }: { searchParam: string }) => {
+        const query = `search=${searchParam}`
+        const transactions = await fetch(`/api/game?${query}`, {
+            cache: "no-store"
+        })
+        const data = await transactions.json()
+
+        router.push(`/dashboard/game?${query}`)
+        setGames(data)
+    }
+
     return (
         <>
             <div className="pb-4 w-full flex items-center gap-4">
-                <SerachInput />
+                <SerachInput title="Masukan nama game" fetchData={(text: string) => getData({ searchParam: text })} searchParam={searchParam} />
                 <AddButton onClick={() => setModal(true)} />
             </div>
             {

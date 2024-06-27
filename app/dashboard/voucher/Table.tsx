@@ -34,7 +34,7 @@ const Table = ({ data }: Props) => {
             </div>
             {
                 modal ?
-                    <VoucherModal handleClose={() => closeModal()} defaultValue={vouvherEdit} setVoucers={setVouchers}/> : ""
+                    <VoucherModal handleClose={() => closeModal()} defaultValue={vouvherEdit} setVoucers={setVouchers} /> : ""
             }
             <table className="w-full text-sm text-left rtl:text-right text-gray-400">
                 <thead className="uppercase bg-gray-700 text-gray-400 text-xs">
@@ -43,19 +43,10 @@ const Table = ({ data }: Props) => {
                             Code
                         </th>
                         <th scope="col" className="py-3">
-                            Discount
-                        </th>
-                        <th scope="col" className="py-3">
-                            Maximal Discount
-                        </th>
-                        <th scope="col" className="py-3">
                             Maximal Penggunaan
                         </th>
                         <th scope="col" className="py-3">
-                            Minimum Pembelian
-                        </th>
-                        <th scope="col" className="py-3">
-                            Expaird
+                            Expired
                         </th>
                         <th scope="col" className="py-3 text-center">
                             Action
@@ -71,25 +62,19 @@ const Table = ({ data }: Props) => {
                                         {voucher.code}
                                     </td>
                                     <td className="py-4">
-                                        {voucher.discount}
-                                    </td>
-                                    <td className="py-4">
-                                        {voucher?.max_dicont || "-"}
-                                    </td>
-                                    <td className="py-4">
                                         {voucher?.max_usage || "-"}
-                                    </td>
-                                    <td className="py-4">
-                                        {voucher?.min_spen || "-"}
                                     </td>
                                     <td className="py-4">
                                         {voucher?.exp || "-"}
                                     </td>
                                     <td className="py-4 flex items-center gap-4 mt-2 justify-center mr-4 ml-12">
+                                        <button className="font-medium text-lg text-blue-500 " title="delete">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 256 256"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path></svg>
+                                        </button>
                                         <EditButton
                                             onClick={() => { setModal(true); setVoucherEdit(voucher) }}
                                         />
-                                        <DeleteButton id={`${voucher.id}`} url="/api/voucher" updateItem={()=>deleteVoucher(voucher.id)}/>
+                                        <DeleteButton id={`${voucher.id}`} url="/api/voucher" updateItem={() => deleteVoucher(voucher.id)} />
                                     </td>
                                 </tr>
                             )

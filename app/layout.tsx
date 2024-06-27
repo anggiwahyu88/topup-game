@@ -3,9 +3,7 @@ import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import Navbar from "@/components/Navbar";
 
-const defaultUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : "http://localhost:3000";
+const defaultUrl = process.env.NEXT_PUBLIC_URL || "http://localhost:3000";
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
@@ -21,7 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-dark">
-      <Navbar/>
+        <Navbar />
         <main className="min-h-screen flex flex-col items-center pt-20">
           <Toaster />
           {children}

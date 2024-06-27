@@ -4,7 +4,7 @@ import { logout } from "./_logout";
 import ListMenu from "./ListMenu";
 import Link from "next/link";
 
-const NavUser = ({ user, isAdmin }: { user: any, isAdmin: boolean }) => {
+const NavUser = ({ user, isAdmin }: { user: string, isAdmin: boolean }) => {
 
     return (
         <header className="h-16 w-full my-shadow fixed z-20 bg-dark">
@@ -23,7 +23,7 @@ const NavUser = ({ user, isAdmin }: { user: any, isAdmin: boolean }) => {
                                 </>
                                 :
                                 <>
-                                    <p>{user?.user_metadata.fullname}</p>
+                                    <p>{user}</p>
                                     <form className='flex items-center'>
                                         <button className='bg-primary text-md px-4 py-1 rounded-lg hover:brightness-75 transition-all duration-300 font-medium text-dark' formAction={logout}>Log out</button>
                                     </form>

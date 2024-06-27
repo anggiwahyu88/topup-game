@@ -1,10 +1,10 @@
 "use client"
 
 import Link from "next/link";
-const NavAdmin = () => {
-
+import { logout } from "./_logout";
+const NavAdmin = ({ user }: { user: string }) => {
     return (
-        <header>
+        <header className="w-min">
             <nav className={`fixed z-20 w-16 hover:w-64 h-full bg-gray-800 transition-all ease-in-out duration-500 group overflow-hidden p-4 space-y-5`}>
                 <div className="flex items-center text-gray-100 font-semibold relative mb-2">
                     <div>
@@ -12,7 +12,7 @@ const NavAdmin = () => {
                             <path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"></path>
                         </svg>
                     </div>
-                    <p className="group-hover:opacity-100 opacity-0 transition-all duration-200 ease-out absolute w-max left-10">User</p>
+                    <p className="group-hover:opacity-100 opacity-0 transition-all duration-200 ease-out absolute w-max left-10">{user}</p>
                 </div>
                 <Link href="/" className="flex items-center text-gray-100 hover:font-semibold relative">
                     <div className="hover:-rotate-12 transition-all duration-200 ease-in-out">
@@ -61,7 +61,7 @@ const NavAdmin = () => {
                     </div>
                     <p className="group-hover:opacity-100 opacity-0 transition-all duration-200 ease-out absolute w-max left-10">Provider</p>
                 </Link>
-                <Link href="/product" className="flex items-center text-gray-100 hover:font-semibold relative">
+                <Link href="/dashboard/transaction" className="flex items-center text-gray-100 hover:font-semibold relative">
                     <div className="hover:-rotate-12 transition-all duration-200 ease-in-out">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="w-6 h-6" viewBox="0 0 256 256"><path d="M28,128a8,8,0,0,1,0-16H56a8,8,0,0,0,0-16H40a24,24,0,0,1,0-48,8,8,0,0,1,16,0h8a8,8,0,0,1,0,16H40a8,8,0,0,0,0,16H56a24,24,0,0,1,0,48,8,8,0,0,1-16,0ZM232,56V192a16,16,0,0,1-16,16H40a16,16,0,0,1-16-16V152a8,8,0,0,1,16,0v40H160V160H80a8,8,0,0,1,0-16h80V112H104a8,8,0,0,1,0-16H216V64H96a8,8,0,0,1,0-16H224A8,8,0,0,1,232,56Zm-56,88h40V112H176Zm40,48V160H176v32Z"></path></svg>
                     </div>
@@ -73,13 +73,14 @@ const NavAdmin = () => {
                     </div>
                     <p className="group-hover:opacity-100 opacity-0 transition-all duration-200 ease-out absolute w-max left-10">Deposit</p>
                 </Link>
-                <Link href="/product" className="flex items-center text-gray-100 hover:font-semibold relative">
-                    <div className="hover:-rotate-12 transition-all duration-200 ease-in-out">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="w-6 h-6" viewBox="0 0 256 256"><path d="M120,216a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V40a8,8,0,0,1,8-8h64a8,8,0,0,1,0,16H56V208h56A8,8,0,0,1,120,216Zm109.66-93.66-40-40a8,8,0,0,0-11.32,11.32L204.69,120H112a8,8,0,0,0,0,16h92.69l-26.35,26.34a8,8,0,0,0,11.32,11.32l40-40A8,8,0,0,0,229.66,122.34Z"></path></svg>
-                    </div>
-                    <p className="group-hover:opacity-100 opacity-0 transition-all duration-200 ease-out absolute w-max left-10">Log Out</p>
-                </Link>
-
+                <form action="" className="flex items-center text-gray-100 hover:font-semibold relative">
+                    <button className="w-full flex" formAction={logout}>
+                        <div className="hover:-rotate-12 transition-all duration-200 ease-in-out w-min">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="w-6 h-6" viewBox="0 0 256 256"><path d="M120,216a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V40a8,8,0,0,1,8-8h64a8,8,0,0,1,0,16H56V208h56A8,8,0,0,1,120,216Zm109.66-93.66-40-40a8,8,0,0,0-11.32,11.32L204.69,120H112a8,8,0,0,0,0,16h92.69l-26.35,26.34a8,8,0,0,0,11.32,11.32l40-40A8,8,0,0,0,229.66,122.34Z"></path></svg>
+                        </div>
+                        <p className="group-hover:opacity-100 opacity-0 transition-all duration-200 ease-out absolute w-max left-10">Log Out</p>
+                    </button>
+                </form>
             </nav>
         </header>
     );

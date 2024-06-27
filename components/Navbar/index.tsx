@@ -10,7 +10,7 @@ const Navbar = async () => {
     let response
     if (user) response = await supabase.from("user").select("role").eq("id", user?.id).single()
     return (
-        <Content  user={user} isAdmin={response?.data?.role =="admin"||false}/>
+        <Content  user={user?.user_metadata?.fullname||""} isAdmin={response?.data?.role =="admin"||false}/>
     )
 }
 

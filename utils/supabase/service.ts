@@ -2,11 +2,14 @@ import { createClient } from "./server";
 import { getFileName } from "../getFileName";
 
 
-export const getAllGames = async (select: string) => {
+export const getAllGames = async (select: string,search?: string) => {
     const supabase = createClient();
-    const { data } = await supabase
+    let query = supabase
         .from("game")
-        .select(select as "*");
+        .select(select as "*")
+    if (search) query.ilike("name", `%${search}%`) 
+    
+    const { data } = await query;
     return data
 }
 
@@ -145,5 +148,13 @@ export const getAllPaymets = async (select: string) => {
         .select(select as "*")
         .eq("status", true);
 
+    return data
+}
+
+export const getAllTransaction = async (select: string) => {
+    const supabase = createClient();
+    const { data } = await supabase
+        .from("transaction")
+        .select(select as "*")
     return data
 }
