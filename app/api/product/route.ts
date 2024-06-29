@@ -1,5 +1,5 @@
 import { getAllProduct } from "@/utils/api/service";
-import { getAllGames } from "@/utils/supabase/service";
+import { getGames } from "@/utils/supabase/service";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
     const page = Number(url.searchParams.get("page")) || 1
     const search = url.searchParams.get("search") || ""
     const game_id = Number(url.searchParams.get("game_id") || "")
-    const games = await getAllGames("id, name,name_provider")
+    const games = await getGames({select:"id, name,name_provider"})
     const product = await getAllProduct()
     const gameMap = new Map(games?.map(game => [game.name_provider, game.id]));
     const form = page * 10 - 10

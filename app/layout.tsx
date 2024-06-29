@@ -1,7 +1,7 @@
 
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/Navbar/page";
 
 const defaultUrl = process.env.NEXT_PUBLIC_URL || "http://localhost:3000";
 

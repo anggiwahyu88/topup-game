@@ -1,10 +1,11 @@
 import toast from "react-hot-toast"
 import Input from "../Form/Input"
-import { actionAddVoucer, actionEditVoucer } from "./_action"
 import { SubmitButton } from "../Form/SubmitButton"
 import { useFormState } from "react-dom"
 import { VoucherType } from "@/utils/type"
 import { useEffect } from "react"
+import { update } from "@/server-actions/voucher/update"
+import { insert } from "@/server-actions/game/insert"
 
 type Props = {
     handleClose: () => void,
@@ -13,7 +14,7 @@ type Props = {
 }
 
 const VoucherModal = ({ handleClose, defaultValue, setVoucers }: Props) => {
-    const action = defaultValue ? actionEditVoucer : actionAddVoucer
+    const action = defaultValue ? update : insert
     const initialState = defaultValue ? { id: defaultValue.id } : null
 
     const [state, formAction] = useFormState<any, FormData>(action, initialState)

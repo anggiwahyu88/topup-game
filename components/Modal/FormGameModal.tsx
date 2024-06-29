@@ -6,8 +6,9 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { SubmitButton } from "../Form/SubmitButton";
 import { useFormState } from "react-dom";
-import { add, update } from "./_action";
 import { GameType } from "@/utils/type";
+import { update } from "@/server-actions/game/update";
+import { insert } from "@/server-actions/game/insert";
 
 interface Modal {
     handleClose: any,
@@ -19,7 +20,7 @@ interface Modal {
 
 const FormGameModal: React.FC<Modal> = ({ handleClose, defaultValue, defaultImageUrl, game, setGames }) => {
     const defaultIsCheckId = defaultValue?.check_id ? true : false
-    const action = defaultValue ? update : add
+    const action = defaultValue ? update : insert
     const initialState = defaultValue ? { id: defaultValue.id, image_name: defaultValue.image_name } : null
     const pendingText = defaultValue ? "Update" : "Add"
     const title = defaultValue ? "Update" : "Add"
@@ -48,7 +49,7 @@ const FormGameModal: React.FC<Modal> = ({ handleClose, defaultValue, defaultImag
             handleClose()
         }
 
-    }, [state, handleClose,setGames, defaultValue])
+    }, [state, handleClose, setGames, defaultValue])
 
     const handleFileChange = (e: React.ChangeEvent) => {
         const file = (e.target as HTMLInputElement).files?.[0] || null;

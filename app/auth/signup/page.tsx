@@ -5,7 +5,7 @@ import Input from "@/components/Form/Input";
 import Link from "next/link";
 import { SubmitButton } from "@/components/Form/SubmitButton";
 import { useFormState } from "react-dom";
-import { action } from "./action";
+import { action } from "@/server-actions/user/register";
 
 const Page = () => {
     const [state, formAction] = useFormState(action, null)

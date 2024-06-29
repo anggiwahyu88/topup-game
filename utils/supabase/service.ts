@@ -1,25 +1,29 @@
 import { createClient } from "./server";
 import { getFileName } from "../getFileName";
 
+type PropsSelectGames = {
+    select: string
+    search?: string,
+    eq?: { name: string, value: any }[]
+    single?: boolean
+}
 
-export const getAllGames = async (select: string,search?: string) => {
+type ReturnType<T extends PropsSelectGames> = T["single"] extends true ? any : any[] | null;
+
+export const getGames = async <T extends PropsSelectGames>(props: T): Promise<ReturnType<T>> => {
     const supabase = createClient();
     let query = supabase
         .from("game")
-        .select(select as "*")
-    if (search) query.ilike("name", `%${search}%`) 
-    
+        .select(props.select as "*")
+    if (props.search) query.ilike("name", `%${props.search}%`)
+    if (props.eq) {
+        props.eq.forEach(item => {
+            query.eq(item.name, item.value)
+        })
+    }
+    if (props.single) query.single()
     const { data } = await query;
-    return data
-}
-
-export const getAllGamesActive = async (select: string) => {
-    const supabase = createClient();
-    const { data } = await supabase
-        .from("game")
-        .select(select as "*")
-        .eq("status", true);
-    return data
+    return data as ReturnType<T>;
 }
 
 export const getGameByPath = async (path: string, select: string) => {
@@ -33,15 +37,6 @@ export const getGameByPath = async (path: string, select: string) => {
     return data
 }
 
-export const getURLImage = (path: string) => {
-    const supabase = createClient();
-    const { data } = supabase
-        .storage
-        .from('image')
-        .getPublicUrl(path)
-    return data
-}
-
 export const getCount = async (name: string) => {
     const supabase = createClient();
     const { count } = await supabase
@@ -50,6 +45,7 @@ export const getCount = async (name: string) => {
     return count
 }
 
+type GameProps = { name: string, developer: string, descripsion: string, name_provider: string, image: File, description_instructions: string, check_id: string, status: boolean, server_list: string, zone_id: boolean }
 export const uploadGame = async (props: { name: string, developer: string, descripsion: string, name_provider: string, image: File, description_instructions: string, check_id: string, status: boolean, server_list: string, zone_id: boolean }) => {
     const { image, ...data } = props;
     const supabase = createClient();
@@ -78,8 +74,8 @@ export const uploadGame = async (props: { name: string, developer: string, descr
     return { error: null, data: insertData }
 }
 
-export const updateGameById = async (props: { name: string, developer: string, descripsion: string, name_provider: string, image: File, description_instructions: string, check_id: string, status: boolean, server_list: string, zone_id: boolean, image_name: string, id: number }) => {
-    const { image, id, ...data } = props;
+export const updateGameById = async (props: GameProps & { image_name: string, id: number }) => {
+    const { image, id, image_name, ...data } = props;
     const supabase = createClient();
     const path = props?.name.toLowerCase().replace(/\s+/g, '-');
     let filename = props.image_name;
@@ -156,5 +152,44 @@ export const getAllTransaction = async (select: string) => {
     const { data } = await supabase
         .from("transaction")
         .select(select as "*")
+    return data
+}
+
+type VoucherProps = {
+    code: string;
+    discount: number | null;
+    min_spen: number | null;
+    max_dicont: number | null;
+    exp: Date | null;
+    max_usage: number | null;
+}
+export const InsertVoucher = async (props: VoucherProps) => {
+    const supabase = createClient()
+    const { data, error } = await supabase.from("voucher").insert(props).select().single()
+    if (error) {
+        return {
+            valid: false,
+            errors: {
+                user: error.message
+            },
+            data: null
+        }
+    }
+    return data
+}
+
+export const UpdateVoucher = async (props: VoucherProps & { id: number }) => {
+    const supabase = createClient()
+    const { id, ...parameter } = props
+    const { data, error } = await supabase.from("voucher").update(parameter).eq("id", id).select().single()
+    if (error) {
+        return {
+            id: props.id,
+            valid: false, errors: {
+                user: error.message
+            },
+            data: null
+        }
+    }
     return data
 }

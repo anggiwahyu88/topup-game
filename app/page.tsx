@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Card from "@/components/Card";
 import Collapse from "@/components/Collapse";
-import { getAllGamesActive, getURLImage } from "@/utils/supabase/service";
+import { getGames } from "@/utils/supabase/service";
 
 type IGame ={
     name: string
@@ -11,8 +11,7 @@ type IGame ={
 }
 
 const Page = async () => {
-    const data = await getAllGamesActive("name,developer,image_name,path")
-
+    const data = await getGames({ select: "name, developer, image_name, path", eq: [{ name: "status", value: true }] })
     return (
         <div className="pp">
             <section className="">
@@ -33,9 +32,9 @@ const Page = async () => {
                 </div>
                 <div className="flex items-center justify-start flex-wrap gap-y-4 gap-x-2">
                     {data?.map((game: IGame, i: number) => {
-                        const image = getURLImage(`game/${game.image_name}`)
+                        const image_url = `${process.env.NEXT_PUBLIC_IMAGE_URL}game/${game.image_name}`
                         return (
-                            <Card key={i} name={game.name} developer={game.developer} href={`/${game.path}`} image_url={image.publicUrl} />
+                            <Card key={i} name={game.name} developer={game.developer} href={`/${game.path}`} image_url={image_url} />
                         )
                     })}
                 </div>
