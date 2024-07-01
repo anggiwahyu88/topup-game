@@ -3,26 +3,32 @@ import { qris, transfer_bank } from "./request"
 import { createClient } from "@/utils/supabase/server";
 import { generateTransactionNumber } from "@/utils/getOrderID";
 
+const responseError=(msg:string)=>{
+    return NextResponse.json({
+        error: true,
+        msg,
+    });
+}
+
 export async function POST(request: NextRequest) {
-    const { item, phone, game_id, payment_id, } = await request.json()
+    const { item, phone, game_id, payment_id, } = await request.json()    
     const supabase = createClient()
     const { data: gameData, error: gameError } = await supabase
         .from("game")
         .select("name")
         .eq("id", game_id)
         .single();
+    if (gameError) {
+        return responseError("game tidak ditemukan")
+    }
 
     const { data: paymentData, error: paymentError } = await supabase
         .from("payment")
         .select("name_provider")
         .eq("id", payment_id)
         .single();
-
-    if (gameError || paymentError || !gameData?.name || !paymentData?.name_provider) {
-        return NextResponse.json({
-            error: true,
-            msg: "invalid Input",
-        });
+    if (paymentError) {
+        return responseError("payment tidak ditemukan")
     }
 
     const order_id = generateTransactionNumber(gameData.name, phone)

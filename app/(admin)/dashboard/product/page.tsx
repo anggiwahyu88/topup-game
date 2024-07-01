@@ -30,7 +30,7 @@ const Page = async ({ searchParams }: Props) => {
     supabase.from("logo product").select("name_image, name_product,game_id"),
     getAllProduct_nonAktif("code")
   ])
-  const product = await response.json()
+  const product = await response.json()  
 
   return (
     <div className="pp ml-16">

@@ -1,62 +1,45 @@
 "use client"
 
+import Button from "../Button/PrimaryButton";
+import toast from "react-hot-toast";
+import Image from "next/image";
+import { useAppSelector } from "@/hook/redux";
 import { calculateFee } from "@/utils/calulateFee";
 import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
+import { useState } from "react";
 
 interface Modal {
     handleClose: () => void,
-    user_id: string,
-    zone_id?: string,
-    server?: string,
-    username?: string,
-    phone: string,
-    payment: {
-        id: number,
-        type: string,
-        fee: string
-    }
-    product: {
-        code: string;
-        name: string;
-        price: number;
-    },
-    game_id: number,
-    discount: number
 }
 
-const ConfirmasionModal: React.FC<Modal> = ({ handleClose, user_id, phone, username, zone_id, product, payment, game_id, server, discount }) => {
+const ConfirmasionModal: React.FC<Modal> = ({ handleClose }) => {
     const router = useRouter()
+    const { user_id, zone_id, server, username, phone, product, voucher, game_id, payment } = useAppSelector(state => state.chekout)
+    const [loading, setLoading] = useState(false)
 
     const checkOut = async () => {
+        setLoading(true)
         interface Item {
             username?: string;
             server?: string;
             zone_id?: string;
         }
         let item: Item = {};
-        if (username) {
-            item.username = username;
-        }
-        if (zone_id) {
-            item.zone_id = zone_id;
-        }
-        if (server) {
-            item.server = server;
-        }
+        if (username) item.username = username;
+        if (zone_id) item.zone_id = zone_id;
+        if (server) item.server = server;
         const response = await fetch("/api/payment", {
             method: "POST",
             body: JSON.stringify({
                 item: {
                     user_id,
                     ...item,
-                    id: product.code,
-                    name: product.name,
-                    price: (fee + product.price) - discount,
+                    ...product
                 },
                 phone,
                 payment_id: payment.id,
-                game_id,
+                game_id: game_id,
+                voucher: voucher.code
             })
         })
         const data = await response.json()
@@ -66,6 +49,7 @@ const ConfirmasionModal: React.FC<Modal> = ({ handleClose, user_id, phone, usern
             return
         }
         toast.error(data.msg)
+        setLoading(false)
         handleClose()
     }
     const fee = calculateFee(product.price, payment.fee)
@@ -120,10 +104,10 @@ const ConfirmasionModal: React.FC<Modal> = ({ handleClose, user_id, phone, usern
                                 <p className="font-bold">Rp {fee.toLocaleString('id-ID')},-</p>
                             </div>
                             {
-                                discount ?
+                                voucher.discount ?
                                     <div className="w-full flex justify-between mt-1 text-green-400">
                                         <p>Potongan Harga</p>
-                                        <p className="font-bold">- Rp {discount.toLocaleString('id-ID')},-</p>
+                                        <p className="font-bold">- Rp {voucher.discount.toLocaleString('id-ID')},-</p>
                                     </div> : ""
                             }
                             <div className="w-full flex justify-between mt-1">
@@ -132,16 +116,23 @@ const ConfirmasionModal: React.FC<Modal> = ({ handleClose, user_id, phone, usern
                             </div>
                             <div className="w-full flex justify-between mt-1">
                                 <p>Total Pembayaran</p>
-                                <p className="font-bold">Rp {((fee + product.price) - discount).toLocaleString('id-ID')},-</p>
+                                <p className="font-bold">Rp {((fee + product.price) - voucher.discount).toLocaleString('id-ID')},-</p>
                             </div>
                         </div>
                     </div>
                     <div className="flex justify-end w-full gap-5 mt-4">
                         <button className="text-white" onClick={handleClose} type="button">Cancel</button>
-                        <button className="text-dark bg-primary py-1.5 px-2.5 rounded-lg" type="button" onClick={checkOut}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 256 256"><path d="M230.14,58.87A8,8,0,0,0,224,56H62.68L56.6,22.57A8,8,0,0,0,48.73,16H24a8,8,0,0,0,0,16h18L67.56,172.29a24,24,0,0,0,5.33,11.27,28,28,0,1,0,44.4,8.44h45.42A27.75,27.75,0,0,0,160,204a28,28,0,1,0,28-28H91.17a8,8,0,0,1-7.87-6.57L80.13,152h116a24,24,0,0,0,23.61-19.71l12.16-66.86A8,8,0,0,0,230.14,58.87ZM104,204a12,12,0,1,1-12-12A12,12,0,0,1,104,204Zm96,0a12,12,0,1,1-12-12A12,12,0,0,1,200,204Zm4-74.57A8,8,0,0,1,196.1,136H77.22L65.59,72H214.41Z"></path></svg>
-                            Pesan Sekarang!
-                        </button>
+                        <Button onClick={checkOut} disabled={loading} className="px-4">
+                            {
+                                loading ? "Loading..." :
+                                    <>
+                                        <Image src="/cart.svg" alt="cart" width={21} height={21} />
+                                        <span className="font-semibold">
+                                        CHECKOUT
+                                        </span>
+                                    </>
+                            }
+                        </Button>
                     </div>
                 </div>
             </div>

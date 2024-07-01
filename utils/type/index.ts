@@ -15,7 +15,6 @@ export type GameType = {
 }
 
 export type ProductType = {
-    game_id: number,
     code: string,
     game: string,
     name: string,

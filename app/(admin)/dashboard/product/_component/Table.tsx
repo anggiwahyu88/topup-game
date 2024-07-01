@@ -8,7 +8,7 @@ import { LogoData, ProductType } from "@/utils/type";
 import { useState } from "react";
 
 type Props = {
-    products?: ProductType[] | null,
+    products?: (ProductType & { game_id: number })[] | null,
     product_nonAktif: {
         product_name: string
     }[] | null,
