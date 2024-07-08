@@ -1,5 +1,7 @@
+"use server"
+
 import { checkValidationVoucher } from "@/utils/schema/service";
-import { InsertVoucher } from "@/utils/supabase/service";
+import { insertVoucher } from "@/services/voucher/insert";
 
 export const insert = async (state: any, formData: FormData) => {
     const code = (formData?.get("code") as string)?.trim();
@@ -16,7 +18,7 @@ export const insert = async (state: any, formData: FormData) => {
         ...validate,
         data: null
     }
-    const data = await InsertVoucher(parameter)
+    const data = await insertVoucher(parameter)
     return {
         valid: true, errors: null, data
     }

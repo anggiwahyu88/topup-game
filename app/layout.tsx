@@ -1,8 +1,8 @@
 
+import Container from "@/components/Container";
 import "./globals.css";
-import { Toaster } from "react-hot-toast";
+import StoreProvider from "@/context/redux/store/StoreProvider";
 import Navbar from "@/components/Navbar/page";
-import StoreProvider from "@/utils/redux/store/StoreProvider";
 
 const defaultUrl = process.env.NEXT_PUBLIC_URL || "http://localhost:3000";
 
@@ -22,10 +22,9 @@ export default function RootLayout({
       <html lang="en">
         <body className="bg-dark">
           <Navbar />
-          <main className="min-h-screen flex flex-col items-center pt-20">
-            <Toaster />
+          <Container>
             {children}
-          </main>
+          </Container>
         </body>
       </html>
     </StoreProvider>

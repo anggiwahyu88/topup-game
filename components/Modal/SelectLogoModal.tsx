@@ -8,13 +8,13 @@ type Props = {
     name_product: string;
     handleClose: () => void;
     logo: any[];
-    setImageLogo: React.Dispatch<React.SetStateAction<LogoData[] | null>>;
+    updateLogo: (img_name: string, data: LogoData) => void;
     devaultImage?: string,
     clearDevaultImage: () => void,
     game_id: number
 };
 
-const SelectLogoModal = ({ handleClose, logo, name_product, setImageLogo, devaultImage, clearDevaultImage, game_id }: Props) => {
+const SelectLogoModal = ({ handleClose, logo, name_product, devaultImage, clearDevaultImage, game_id ,updateLogo}: Props) => {
     const supabase = createClient();
     const [nameLogo, setNameLogo] = useState("");
     const [loading, setLoading] = useState<boolean>(false);
@@ -34,7 +34,7 @@ const SelectLogoModal = ({ handleClose, logo, name_product, setImageLogo, devaul
             })
             const logo_products: {
                 error: boolean,
-                data: LogoData[],
+                data: LogoData,
                 msg: string
             } = await response.json()
 
@@ -42,16 +42,7 @@ const SelectLogoModal = ({ handleClose, logo, name_product, setImageLogo, devaul
                 console.error(logo_products.error);
                 return;
             }
-            if (name_image == "none") {
-                setImageLogo((prev: LogoData[] | null) => {
-                    if (prev == null) {
-                        return logo_products.data;
-                    }
-                    return prev.filter(item => item.name_product != logo_products.data[0].name_product);
-                });
-                return
-            }
-            setImageLogo((prev: LogoData[] | null) => prev ? [...prev, logo_products.data[0]] : [logo_products.data[0]]);
+            updateLogo(name_image,logo_products.data)
         } catch {
 
         } finally {
@@ -97,8 +88,7 @@ const SelectLogoModal = ({ handleClose, logo, name_product, setImageLogo, devaul
                             return (
                                 <div key={i} className={`${data.metadata.size === 0 ? "hidden" : ""} p-1 transition-transform ${loading || devaultImage == data.name ? "cursor-default" : "cursor-pointer hover:scale-110"} ${data.name === nameLogo ? "brightness-75 scale-110 " : ""} transition-all`} onClick={() => handleClick(data.name)}>
                                     {data.metadata.size > 0 ? (
-                                        <button onClick={() => console.log("dss")
-                                        } className="h-16 max-w-20 w-auto relative">
+                                        <button className="h-16 max-w-20 w-auto relative">
                                             {
                                                 devaultImage == data.name ?
                                                     <div className="text-xl absolute z-10 text-dark -right-3 -top-2 rounded-full bg-primary w-7 h-7 flex justify-center items-center">

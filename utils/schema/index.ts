@@ -63,9 +63,7 @@ export const GameSchema = Yup.object().shape({
         .required('Pilih salah satu game'),
     description_instructions: Yup.string()
         .required('Deskripsi petunjuk harus di isi'),
-    isCheck_id: Yup.string().test('check value', 'invalid value', function (value) {
-        return value?.toString() == "false" || value?.toString() == "true"
-    }),
+    isCheck_id: Yup.boolean(),
     check_id: Yup.string().nullable()
         .when("isCheck_id", (preview, schema) => {
             if (preview[0] == "true")
@@ -74,12 +72,8 @@ export const GameSchema = Yup.object().shape({
                     .matches(/^\S*$/, 'periksa kembali kode validasi')
             return schema
         }),
-    status: Yup.string().test('check value', 'invalid value', function (value) {
-        return value?.toString() == "false" || value?.toString() == "true"
-    }),
-    zone_id: Yup.string().test('check value', 'invalid value', function (value) {
-        return value?.toString() == "false" || value?.toString() == "true"
-    }),
+    status: Yup.boolean(),
+    zone_id: Yup.boolean(),
     server_list: Yup.string().nullable()
 });
 

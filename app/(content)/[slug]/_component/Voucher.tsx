@@ -3,7 +3,7 @@
 import Button from "@/components/Button/PrimaryButton"
 import toast from "react-hot-toast"
 import { useAppDispatch, useAppSelector } from "@/hook/redux"
-import { addToCheckout } from "@/utils/redux/slice/user/checkoutSlice"
+import { addToCheckout } from "@/context/redux/slice/user/checkoutSlice";
 import { useState } from "react"
 
 const Voucher = () => {

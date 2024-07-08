@@ -1,3 +1,4 @@
+import ErrorMsg from "../EroorMsg"
 import toast from "react-hot-toast"
 import Input from "../Form/Input"
 import { SubmitButton } from "../Form/SubmitButton"
@@ -22,9 +23,6 @@ const VoucherModal = ({ handleClose, defaultValue, setVoucers }: Props) => {
     const title = defaultValue ? "Update" : "Add"
 
     useEffect(() => {
-        if (state?.errors?.users) {
-            toast.error(state.errors.users)
-        }
         if (state?.valid) {
             if (defaultValue) {
                 setVoucers(prev => {
@@ -58,6 +56,11 @@ const VoucherModal = ({ handleClose, defaultValue, setVoucers }: Props) => {
                     </div>
                     <div className="flex-1 flex flex-col w-full px-8 sm:max-w-md justify-center gap-2 mx-auto mt-4">
                         <form className="animate-in flex-1 flex flex-col w-full justify-center gap-2 text-foreground !text-black">
+                            {
+                                state?.errors?.users ?
+                                    <ErrorMsg msg={state?.errors?.users || ""} />
+                                    : ""
+                            }
                             <Input label="Kode Voucher" defaultValue={defaultValue?.code} error={state?.errors?.code} required name="code" />
                             <Input label="Diskon (%)" defaultValue={defaultValue?.discount} error={state?.errors?.discount} required name="discount" />
                             <Input label="Minimal Pembelian (kosongkan jika tidak ada minimal pembelian)" defaultValue={defaultValue?.min_spen} error={state?.errors?.min_spen} name="min_spen" />

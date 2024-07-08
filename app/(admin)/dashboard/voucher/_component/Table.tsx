@@ -1,4 +1,5 @@
 "use client"
+
 import DeleteButton from "@/components/Button/DeleteButton"
 import VoucherModal from "@/components/Modal/VoucherModal"
 import EditButton from "@/components/Button/EditButton"
@@ -65,16 +66,13 @@ const Table = ({ data }: Props) => {
                                         {voucher?.max_usage || "-"}
                                     </td>
                                     <td className="py-4">
-                                        {voucher?.exp || "-"}
+                                        {voucher?.exp?.toDateString() || "-"}
                                     </td>
                                     <td className="py-4 flex items-center gap-4 mt-2 justify-center mr-4 ml-12">
-                                        <button className="font-medium text-lg text-blue-500 " title="delete">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 256 256"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path></svg>
-                                        </button>
                                         <EditButton
                                             onClick={() => { setModal(true); setVoucherEdit(voucher) }}
                                         />
-                                        <DeleteButton id={`${voucher.id}`} url="/api/voucher" updateItem={() => deleteVoucher(voucher.id)} />
+                                        <DeleteButton id={`${voucher.id}`} url="/api/voucher" updateItem={() => deleteVoucher(voucher.id)} name={`voucher ${voucher.code}`} />
                                     </td>
                                 </tr>
                             )

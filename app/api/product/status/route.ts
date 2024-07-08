@@ -1,4 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
+import { revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -16,6 +17,7 @@ export async function POST(request: NextRequest) {
             msg: response.error.message
         })
     }
+    revalidateTag("product")
     return NextResponse.json({
         error: false,
     })

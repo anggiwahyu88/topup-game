@@ -84,11 +84,11 @@ export type PaymentType = {
 export type VoucherType = {
     id: number,
     code: string,
-    discount: number,
-    min_spen: number,
-    max_dicont: number,
-    exp: string,
-    max_usage: number
+    discount: number | null,
+    min_spen: number | null,
+    max_dicont: number | null,
+    exp: Date | null,
+    max_usage: number | null
 }
 
 type CustomerDetail = {

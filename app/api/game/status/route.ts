@@ -1,4 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
+import { revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -12,6 +13,7 @@ export async function POST(request: NextRequest) {
             msg: error.message
         })
     }
+    revalidateTag("game")
     return NextResponse.json({
         isValid: true
     })

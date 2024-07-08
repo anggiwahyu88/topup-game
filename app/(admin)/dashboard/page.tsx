@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { getCount } from '@/utils/supabase/service';
+import { count } from '@/services/Count';
 
 interface Product {
     name: string;
@@ -25,11 +25,11 @@ const products: Product[] = [
 ];
 
 const Page: React.FC = async () => {
-    const countGame = await getCount('game')
-    const countCategory = await getCount('category')
+    const countGame = await count('game')
+    const countCategory = await count('category')
 
     return (
-        <div className='pp ml-16'>
+        <div className='ml-16 2xl:ml-0'>
             <section className='grid grid-cols-4 gap-4 justify-center mb-8 mt-4'>
                 <Link href={"/dashboard/game"} className='bg-gray-800 p-6 flex w-min mx-auto'>
                     <div>
@@ -78,7 +78,6 @@ const Page: React.FC = async () => {
             </section>
             <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                 <div className="flex flex-col sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between pb-4">
-                    {/* <DropDown /> */}
                     <label htmlFor="table-search" className="sr-only">
                         Search
                     </label>

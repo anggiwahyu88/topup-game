@@ -1,5 +1,7 @@
+"use server"
+
 import { checkValidationGame } from "@/utils/schema/service";
-import { updateGameById } from "@/utils/supabase/service";
+import { updateGame } from "@/services/game/update";
 
 export const update = async (state: any, formData: FormData) => {
     const name = (formData?.get("name") as string)?.trim();
@@ -15,15 +17,16 @@ export const update = async (state: any, formData: FormData) => {
     const status = formData?.get("status") || "false" as string;
     const zone_id = formData?.get("zone_id") || "false" as string;
 
-    const parameter = { image, name, developer, descripsion, name_provider, description_instructions, check_id, preview, isCheck_id, server_list }
-    const validate = await checkValidationGame({ ...parameter, zone_id, status })
+    const parameter = { image, name, developer, descripsion, name_provider, description_instructions, check_id, zone_id: JSON.parse(zone_id.toString()), server_list, status: JSON.parse(status.toString()) }
+
+    const validate = await checkValidationGame({ ...parameter, isCheck_id, preview })
 
     if (!validate.valid) return {
         id: state.id,
         image_name: state.image_name,
         ...validate
     }
-    const { error, data } = await updateGameById({ ...parameter, zone_id: JSON.parse(zone_id.toString()), status: JSON.parse(status.toString()), id: state.id, image_name: state.image_name })
+    const { error, data } = await updateGame({ ...parameter, zone_id: JSON.parse(zone_id.toString()), status: JSON.parse(status.toString()), id: state.id, image_name: state.image_name })
     if (error) {
         return {
             id: state.id,

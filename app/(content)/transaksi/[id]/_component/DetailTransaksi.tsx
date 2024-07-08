@@ -3,13 +3,14 @@
 import dynamic from "next/dynamic";
 import DetailItem from "./DetailItem";
 import { createClient } from "@/utils/supabase/client";
+import Container from "@/components/Container";
 import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 const Countdown = dynamic(() => import('./Countdown'), { ssr: false })
 const Qris = dynamic(() => import('./TypePayment/Qris'), { ssr: false })
 const Va = dynamic(() => import('./TypePayment/Va'), { ssr: false })
 
-const Transaksi = ({ statusDefault, data, order_id }: { order_id: string, statusDefault: string, data: any }) => {
+const DetailTransaksi = ({ statusDefault, data, order_id }: { order_id: string, statusDefault: string, data: any }) => {
     const [status, setStatus] = useState(statusDefault)
     const objDate = new Date(data.created_at);
     const newDate = objDate.getDate() + '/' + (objDate.getMonth() + 1) + '/' + objDate.getFullYear();
@@ -34,7 +35,7 @@ const Transaksi = ({ statusDefault, data, order_id }: { order_id: string, status
     }, [handleInserts])
 
     return (
-        <div className="pp">
+        <Container>
             <Countdown targetDate={data.exp} status={status} />
             <div className="grid grid-cols-1 lg:grid-cols-3 mb-8">
                 <section className="mt-8 lg:col-span-1">
@@ -150,8 +151,8 @@ const Transaksi = ({ statusDefault, data, order_id }: { order_id: string, status
                     <DetailItem item={data.customer_detail.item} game={data.game} fee={data.payment.fee} />
                 </section>
             </div>
-        </div>
+        </Container>
     );
 }
 
-export default Transaksi;
+export default DetailTransaksi;

@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import { useAppDispatch, useAppSelector } from "@/hook/redux"
-import { addToCheckout } from "@/utils/redux/slice/user/checkoutSlice"
+import { addToCheckout } from "@/context/redux/slice/user/checkoutSlice";
 import { calculateFee } from "@/utils/calulateFee"
 import { errorView } from "../_libs/errorView"
 

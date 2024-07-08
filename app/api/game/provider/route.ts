@@ -1,8 +1,8 @@
-import { getAllProduct } from "@/utils/api/service";
 import { NextRequest, NextResponse } from "next/server";
+import { getAllProductProvider } from "@/services/product/select";
 
 export async function GET(request: NextRequest) {
-    const response = await getAllProduct()
+    const response = await getAllProductProvider()
     const gameNames = new Set();
     response?.forEach(item => {
         gameNames.add(item.game);

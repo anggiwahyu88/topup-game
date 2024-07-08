@@ -1,6 +1,6 @@
 "use client"
 
-const Modal = ({ handleClose, onModal, action }: { handleClose: () => void, onModal: boolean, action: () => void }) => {
+const Modal = ({ handleClose, onModal, action, name }: { handleClose: () => void, onModal: boolean, action: () => void, name: string }) => {
     return (
         <>
             {onModal ?
@@ -17,7 +17,7 @@ const Modal = ({ handleClose, onModal, action }: { handleClose: () => void, onMo
                                 <svg className="mx-auto mb-4 w-12 h-12 text-gray-200" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                                     <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                                 </svg>
-                                <h3 className="mb-5 text-lg font-normal text-gray-400">Are you sure you want to delete this product?</h3>
+                                <h3 className="mb-5 text-lg font-normal text-gray-400">Apakah anda yakin ingin menghapus {name}?</h3>
                                 <button onClick={action} data-modal-hide="popup-modal" type="button" className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
                                     {"Yes, I'm sure"}
                                 </button>

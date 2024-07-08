@@ -1,5 +1,7 @@
+"use server"
+
 import { checkValidationGame } from "@/utils/schema/service";
-import { uploadGame } from "@/utils/supabase/service";
+import { insertGame } from "@/services/game/insert";
 
 export const insert = async (state: any, formData: FormData) => {
     const name = (formData?.get("name") as string)?.trim();
@@ -14,12 +16,15 @@ export const insert = async (state: any, formData: FormData) => {
     const server_list = (formData.get("server_list") as string)?.trim();
     const status = formData?.get("status") || "false" as string;
     const zone_id = formData?.get("zone_id") || "false" as string;
+    
+    const parameter = { image, name, developer, descripsion, name_provider, description_instructions, check_id, zone_id: JSON.parse(zone_id.toString()), server_list, status:JSON.parse(status.toString()) }
 
-    const validate = await checkValidationGame({ image, name, developer, descripsion, name_provider, description_instructions, check_id, preview, isCheck_id, server_list, status, zone_id })
-
+    const validate = await checkValidationGame({ ...parameter, isCheck_id: JSON.parse(isCheck_id.toString()), preview })
+    
     if (!validate.valid) return validate
 
-    const { error, data } = await uploadGame({ image, name, developer, descripsion, name_provider, description_instructions, check_id, status: JSON.parse(`${status}`), server_list, zone_id: JSON.parse(`${zone_id}`) })
+    const { error, data } = await insertGame(parameter)
+    
     if (error) {
         return {
             valid: false, errors: {

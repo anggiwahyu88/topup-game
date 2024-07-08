@@ -4,21 +4,23 @@ import UploadButton from "@/components/Button/UploadButton";
 import SerachInput from "@/components/Form/SerachInput";
 import Pagination from "@/components/Pagination";
 import DropDown from "@/components/Form/DropDown";
-import { Children, cloneElement, isValidElement, useState } from "react";
+import Table from "./Table";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ProductType } from "@/utils/type";
+import { LogoData, ProductType } from "@/utils/type";
+import { getProduct } from "@/services/api/getProduct";
+import { useState } from "react";
 
 type Props = {
-    data: ProductType[] | null,
+    data: (ProductType & { game_id: number, active: boolean, img_name: string | null })[] | null,
     games: {
         name: string,
         id: string
     }[] | null,
     maxData: number,
-    children: React.ReactNode
+    logo: any
 };
 
-const ProductDasboard = ({ children, data, games, maxData }: Props) => {
+const ProductDasboard = ({ data, games, maxData, logo }: Props) => {
     const searchParams = useSearchParams()
     const [count, setCount] = useState<number>(maxData)
     const page = Number(searchParams?.get("page") || 1)
@@ -29,29 +31,31 @@ const ProductDasboard = ({ children, data, games, maxData }: Props) => {
 
     const getData = async ({ game_id = "0", page = 1, searchParam }: { game_id?: string, page?: number, searchParam: string }) => {
         const query = `search=${searchParam}&page=${page}&game_id=${game_id}`
-        const transactions = await fetch(`/api/product?${query}`, {
-            cache: "no-store"
-        })
-        const data = await transactions.json()
+        const products = await getProduct(query, "client")
 
         router.push(`/dashboard/product?${query}`)
-        setProducts(data.data)
-        setCount(data.count)
+        setProducts(products.data)
+        setCount(products.count)
     }
+    const updateLogo = (img_name: string, data: LogoData) => {
+        setProducts((prev) => {
+            const index = prev?.findIndex((product) => product.name === data.name_product && product.game_id === data.game_id);
+            const name = img_name == "none" ? null : img_name
+            if (prev && index != undefined) {
+                prev[index].img_name = name
+            }
+            return prev;
+        });
+    }
+
     return (
         <>
-
             <div className="pb-4 w-full flex items-center gap-4">
-                <SerachInput fetchData={(text: string) => getData({ searchParam: text })} title="Msukan Nama Product" searchParam={searchParam} />
+                <SerachInput fetchData={(text: string) => getData({ searchParam: text })} title="Masukan Nama Product" searchParam={searchParam} />
                 <DropDown data={games} logo={"/game.svg"} handleFilterChange={(id: string) => getData({ game_id: id, searchParam })} id={game_id} />
                 <UploadButton />
             </div>
-            {Children.map(children, child => {
-                if (isValidElement<Partial<{ products: ProductType[] | null }>>(child)) {
-                    return cloneElement(child, { products });
-                }
-                return child;
-            })}
+            <Table logo={logo} products={products} updateLogo={updateLogo} />
             <Pagination page={page} setPage={(page: number) => getData({ page, game_id, searchParam })} maxData={count || 1} />
         </>
     )

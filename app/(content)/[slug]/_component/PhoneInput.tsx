@@ -1,7 +1,7 @@
 "use client"
 
 import { useAppDispatch, useAppSelector } from "@/hook/redux"
-import { addToCheckout } from "@/utils/redux/slice/user/checkoutSlice"
+import { addToCheckout } from "@/context/redux/slice/user/checkoutSlice";
 
 const Phone = () => {
     const dispatch = useAppDispatch()

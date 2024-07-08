@@ -8,16 +8,12 @@ import { LogoData, ProductType } from "@/utils/type";
 import { useState } from "react";
 
 type Props = {
-    products?: (ProductType & { game_id: number })[] | null,
-    product_nonAktif: {
-        product_name: string
-    }[] | null,
-    defaultImageLogo: LogoData[] | null,
-    logo: any
+    products: (ProductType & { game_id: number,active:boolean, img_name: string | null })[] | null,
+    logo: any,
+    updateLogo:(img_name: string, data: LogoData) => void
 }
 
-const Table = ({ products, product_nonAktif, defaultImageLogo, logo }: Props) => {
-    const [imageLogo, setImageLogo] = useState<LogoData[] | null>(defaultImageLogo);
+const Table = ({ products,logo ,updateLogo}: Props) => {    
     const [defaultImage, setDefaultImage] = useState<string>("");
     const [modal, setModal] = useState({
         name_product: "",
@@ -28,7 +24,7 @@ const Table = ({ products, product_nonAktif, defaultImageLogo, logo }: Props) =>
     return (
         <>
             {modal.onModal ?
-                <SelectLogoModal name_product={modal.name_product} handleClose={() => setModal({ name_product: "", onModal: false, game_id: 0 })} logo={logo} game_id={modal.game_id} setImageLogo={setImageLogo} devaultImage={defaultImage} clearDevaultImage={() => setDefaultImage("")} />
+                <SelectLogoModal name_product={modal.name_product} handleClose={() => setModal({ name_product: "", onModal: false, game_id: 0 })} logo={logo} game_id={modal.game_id} updateLogo={updateLogo} devaultImage={defaultImage} clearDevaultImage={() => setDefaultImage("")} />
                 : ""}
             <table className="w-full text-sm text-left rtl:text-right text-gray-400">
                 <thead className="uppercase bg-gray-700 text-gray-400 text-xs">
@@ -55,14 +51,11 @@ const Table = ({ products, product_nonAktif, defaultImageLogo, logo }: Props) =>
                                 game_id: product.game_id
                             }
 
-                            const isProduct_nonAktif = product_nonAktif?.find((value) => value.product_name == product.name) || null
-                            const defaultValueToggle = isProduct_nonAktif ? false : true
 
                             let url
-                            const logoProduct = imageLogo?.find((image) => image.name_product === product.name)
 
-                            if (product.name == logoProduct?.name_product) {
-                                url = `${process.env.NEXT_PUBLIC_IMAGE_URL}logo/${logoProduct?.name_image}`
+                            if (product.img_name) {
+                                url = `${process.env.NEXT_PUBLIC_IMAGE_URL}logo/${product.img_name}`
                             }
                             return (
                                 <tr className="odd:bg-gray-900 even:bg-gray-800 border-b border-gray-700" key={i}>
@@ -70,15 +63,16 @@ const Table = ({ products, product_nonAktif, defaultImageLogo, logo }: Props) =>
                                         {
                                             url ?
                                                 <div className="flex justify-center h-10 max-w-20 w-auto">
-                                                    <button onClick={() => {
-                                                        setDefaultImage(logoProduct?.name_image || "");
+                                                    <button
+                                                     onClick={() => {
+                                                        setDefaultImage(product.img_name || "");
                                                         setModal({
                                                             game_id: product.game_id,
                                                             name_product: product.name,
                                                             onModal: true
                                                         })
-                                                    }
-                                                    }>
+                                                     }}
+                                                    >
                                                         <Image
                                                             alt="logo"
                                                             src={url}
@@ -104,7 +98,7 @@ const Table = ({ products, product_nonAktif, defaultImageLogo, logo }: Props) =>
                                         {product.game}
                                     </td>
                                     <td className="py-4 px-3 text-center">
-                                        <ToggleButton defaultValue={defaultValueToggle} data={dataToggle} url="/api/product/status" />
+                                        <ToggleButton defaultValue={product.active} data={dataToggle} url="/api/product/status" />
                                     </td>
                                 </tr>
                             )

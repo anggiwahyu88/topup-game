@@ -1,5 +1,6 @@
 "use client"
 
+import DetailButton from "@/components/Button/DetailButton"
 import DetailModal from "@/components/Modal/DetailModal"
 import { TransactionType } from "@/utils/type"
 import { dateFormat } from "@/utils/dateFormat"
@@ -128,9 +129,7 @@ const Table = ({ transactions }: { transactions: (TransactionType & { game: { na
                                         {transaction.status_transaction}
                                     </td>
                                     <td className="py-4 flex items-center gap-4 mt-2 justify-center mr-4 ml-12">
-                                        <button className="font-medium text-lg text-blue-500 " title="detail" onClick={() => handleDetail(transaction.order_id)}>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 256 256"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path></svg>
-                                        </button>
+                                        <DetailButton onClick={() => handleDetail(transaction.order_id)} />
                                     </td>
                                 </tr>
                             )

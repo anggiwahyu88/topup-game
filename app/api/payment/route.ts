@@ -3,7 +3,7 @@ import { qris, transfer_bank } from "./request"
 import { createClient } from "@/utils/supabase/server";
 import { generateTransactionNumber } from "@/utils/getOrderID";
 
-const responseError=(msg:string)=>{
+const responseError = (msg: string) => {
     return NextResponse.json({
         error: true,
         msg,
@@ -11,14 +11,14 @@ const responseError=(msg:string)=>{
 }
 
 export async function POST(request: NextRequest) {
-    const { item, phone, game_id, payment_id, } = await request.json()    
+    const { item, phone, game_id, payment_id, } = await request.json()
     const supabase = createClient()
     const { data: gameData, error: gameError } = await supabase
         .from("game")
-        .select("name")
+        .select("name,status")
         .eq("id", game_id)
         .single();
-    if (gameError) {
+    if ((gameError || gameData === null || !gameData.status)) {
         return responseError("game tidak ditemukan")
     }
 

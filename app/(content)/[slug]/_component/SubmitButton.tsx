@@ -4,7 +4,7 @@ import ConfirmasionModal from "@/components/Modal/ConfirmasionModal";
 import Button from "@/components/Button/PrimaryButton";
 import Image from "next/image";
 import { useAppDispatch, useAppSelector } from "@/hook/redux";
-import { addToCheckout } from "@/utils/redux/slice/user/checkoutSlice";
+import { addToCheckout } from "@/context/redux/slice/user/checkoutSlice";
 import { errorView } from "../_libs/errorView";
 import { useState } from "react";
 

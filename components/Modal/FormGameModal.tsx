@@ -1,5 +1,6 @@
 "use client"
 
+import ErrorMsg from "../EroorMsg";
 import toast from "react-hot-toast";
 import Input from "../Form/Input";
 import Image from "next/image";
@@ -22,7 +23,7 @@ const FormGameModal: React.FC<Modal> = ({ handleClose, defaultValue, defaultImag
     const defaultIsCheckId = defaultValue?.check_id ? true : false
     const action = defaultValue ? update : insert
     const initialState = defaultValue ? { id: defaultValue.id, image_name: defaultValue.image_name } : null
-    const pendingText = defaultValue ? "Update" : "Add"
+    const pendingText = defaultValue ? "Updating" : "Adding"
     const title = defaultValue ? "Update" : "Add"
     const [state, formAction] = useFormState<any, FormData>(action, initialState)
     const [imageUrl, setimageUrl] = useState<string | null>(defaultImageUrl || null);
@@ -32,9 +33,6 @@ const FormGameModal: React.FC<Modal> = ({ handleClose, defaultValue, defaultImag
     const [isZoneId, setIsZoneId] = useState<boolean>(defaultValue?.zone_id || false)
 
     useEffect(() => {
-        if (state?.errors?.users) {
-            toast.error(state.errors.users)
-        }
         if (state?.valid) {
             if (defaultValue) {
                 setGames(prev => {
@@ -80,6 +78,10 @@ const FormGameModal: React.FC<Modal> = ({ handleClose, defaultValue, defaultImag
                     </div>
                     <div className="flex-1 flex flex-col w-full px-8 sm:max-w-md justify-center gap-2 mx-auto mt-4">
                         <form className="animate-in flex-1 flex flex-col w-full justify-center gap-2 text-foreground !text-black">
+                            {
+                                state?.errors?.users ?
+                                    <ErrorMsg msg={state?.errors?.users || ""} /> : ""
+                            }
                             <Input
                                 name="name"
                                 label="Nama"
@@ -184,7 +186,7 @@ const FormGameModal: React.FC<Modal> = ({ handleClose, defaultValue, defaultImag
                                     <div className="relative w-11 h-6 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-800 rounded-full peer bg-gray-900 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all border-gray-800 peer-checked:bg-blue-600"></div>
                                     <p className="text-white ml-2">{isZoneId ? "Aktif" : "NonAktif"}</p>
                                 </label>
-                                {state?.errors?.status ? <p className="text-red-500 font-semibold mb-2">{state.errors.status}</p> : ""}
+                                {state?.errors?.zone_id ? <p className="text-red-500 font-semibold mb-2">{state.errors.zone_id}</p> : ""}
                             </div>
 
                             <div className="">

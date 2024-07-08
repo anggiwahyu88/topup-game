@@ -6,78 +6,34 @@ import Payment from "./_component/Payment";
 import Phone from "./_component/PhoneInput";
 import Image from "next/image";
 import Card from "./_component/Product";
-import { getProduct_nonAktifByGame_id, getLogoProductByGame_id, getAllPaymets, getGames } from "@/utils/supabase/service";
-import { GameType, PaymentType, ProductType } from "@/utils/type";
-import { getAllProduct } from "@/utils/api/service";
+import { selectPayments } from "@/services/payments/select";
+import { formatPayments } from "./_libs/formatPayments";
+import { filterProduct } from "./_libs/filterProduct";
+import { getProduct } from "@/services/api/getProduct";
 import { notFound } from "next/navigation";
+import { GameType } from "@/utils/type";
+import { getGame } from "@/services/api/getGame";
 
 const Page = async ({ params }: { params: { slug: string } }) => {
-    const data: GameType = await getGames({ select: "*", eq: [{ name: "path", value: params.slug }], single: true })
+    const data: GameType | null = await getGame(`eq=path&value=${params.slug}&eq=status&value=true&type=single`)
     if (data == null) {
         return notFound()
     }
-    const [productsNonActive, logoProduct, products, payments] = await Promise.all([
-        getProduct_nonAktifByGame_id(data.id.toString()),
-        getLogoProductByGame_id(data.id.toString()),
-        getAllProduct(data.name_provider),
-        getAllPaymets("id,name,image_name,fee,payment_category(name)")
+
+    const [products, payments] = await Promise.all([
+        getProduct(`game_id=${data.id}`),
+        selectPayments("id,name,image_name,fee,payment_category(name)")
     ]);
+
 
     const imageGame = `${process.env.NEXT_PUBLIC_IMAGE_URL}game/${data.image_name}`
 
-    interface NonActiveProduct {
-        name_product: string;
-    }
+    const resultPayments = formatPayments(payments)
 
-    interface LogoProduct {
-        name_product: string;
-        name_image: string;
-    }
+    const result = filterProduct(products.data);
 
-    type Product = (ProductType & { name_image?: string | null; })[]
-
-    const getFilteredAndUpdatedProducts = (
-        products: Product | null,
-        productsNonActive: NonActiveProduct[] | null,
-        logoProduct: LogoProduct[] | null
-    ): { normal: Product, spesial: Product } => {
-        if (!products) return { normal: [], spesial: [] };
-
-        const nonActiveCodes = new Set(productsNonActive?.map(nonActive => nonActive.name_product) || []);
-        const logoMap = new Map(logoProduct?.map(logo => [logo.name_product, logo.name_image]) || []);
-
-        const productsNormal: Product = [];
-        const productSpesial: Product = [];
-
-        products.forEach(product => {
-            if (!nonActiveCodes.has(product.name)) {
-                const updatedProduct = { ...product, name_image: logoMap.get(product.name) || null };
-                if (/^\d/.test(product.name)) {
-                    productsNormal.push(updatedProduct);
-                } else {
-                    productSpesial.push(updatedProduct);
-                }
-            }
-        });
-
-        return { normal: productsNormal, spesial: productSpesial };
-    };
-    let resultPayments: PaymentType[] | null = null
-    if (payments) {
-        const transformedData = payments.reduce((acc: { [key: string]: PaymentType }, item: any) => {
-            const category = item.payment_category.name;
-            if (!acc[category]) {
-                acc[category] = { name: category, type: [] };
-            }
-            const { id, name, image_name, fee } = item;
-            acc[category].type.push({ id, name, image_name, fee });
-            return acc;
-        }, {});
-        resultPayments = Object.values(transformedData);
-    }
-    const result = getFilteredAndUpdatedProducts(products, productsNonActive, logoProduct);
     return (
-        <div className="pp">
+        <>
             <div className="border border-white h-36">
             </div>
             <form className="grid grid-cols-1 lg:grid-cols-3 mt-8 gap-y-6 lg:gap-x-6">
@@ -111,7 +67,8 @@ const Page = async ({ params }: { params: { slug: string } }) => {
                                     <div className="grid grid-cols-2 gap-4 md:grid-cols-3 mt-4 mb-4" >
                                         {result?.spesial?.map((product, i) => {
                                             return (
-                                                <Card key={i} product={product} game_id={data.id} />
+                                                product.active ?
+                                                    <Card key={i} product={product} game_id={data.id} /> : ""
                                             )
                                         })}
                                     </div>
@@ -123,7 +80,8 @@ const Page = async ({ params }: { params: { slug: string } }) => {
                         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 mt-4" >
                             {result?.normal?.map((product, i) => {
                                 return (
-                                    <Card key={i} product={product} game_id={data.id} />
+                                    product.active ?
+                                        <Card key={i} product={product} game_id={data.id} /> : ""
                                 )
                             })}
                         </div>
@@ -152,7 +110,7 @@ const Page = async ({ params }: { params: { slug: string } }) => {
                     <SubmitButton isZoneId={data.zone_id} check_id={data.check_id} server={data.server_list} />
                 </div>
             </form>
-        </div>
+        </>
     )
 }
 

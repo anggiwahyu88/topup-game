@@ -1,18 +1,18 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react";
-import { useDebounce } from "use-debounce";
+import { useDebounce } from "@/hook/useDebounce";
 
 const SerachInput = ({ fetchData, title, searchParam }: { title: string, fetchData: (text: string) => void, searchParam: string }) => {
     const [search, setSearch] = useState(searchParam);
     const isFirstRender = useRef(true);
-    const [value] = useDebounce(search, 1000);
+    const value = useDebounce(search, 1000);
 
     useEffect(() => {
         if (isFirstRender.current) {
             isFirstRender.current = false;
             return;
-        }
+        }        
         fetchData(value)
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [value])

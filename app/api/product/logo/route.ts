@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { createClient } from "@/utils/supabase/server";
 import { getFileName } from "@/utils/getFileName";
 
@@ -23,8 +24,9 @@ export async function POST(request: NextRequest) {
             msg: error.message
         });
     }
+    revalidateTag("product")
     return NextResponse.json({
-        error: true,
+        error: false,
         msg: "upload succses"
     });
 }
@@ -42,7 +44,8 @@ export async function PUT(request: NextRequest) {
             .from("logo product")
             .delete()
             .eq("name_product", name_product)
-            .select("name_image, name_product");
+            .select()
+            .single();
         if (logo_products.error) {
             return NextResponse.json({
                 error: true,
@@ -50,6 +53,7 @@ export async function PUT(request: NextRequest) {
                 data: null
             });
         }
+        revalidateTag("product")
         return NextResponse.json({
             error: false,
             msg: "update succses",
@@ -66,7 +70,8 @@ export async function PUT(request: NextRequest) {
     const logo_products = await supabase
         .from("logo product")
         .insert({ name_image, name_product, game_id })
-        .select("name_image, name_product");
+        .select()
+        .single();
 
     if (logo_products.error) {
         return NextResponse.json({
@@ -75,6 +80,7 @@ export async function PUT(request: NextRequest) {
             data: null
         });
     }
+    revalidateTag("product")
     return NextResponse.json({
         error: false,
         msg: "update succses",

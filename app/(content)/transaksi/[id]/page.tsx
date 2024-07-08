@@ -1,21 +1,16 @@
+import DetailTransaksi from "./_component/DetailTransaksi";
 import { createClient } from "@/utils/supabase/server";
-import Transaksi from "./_component/Transaksi";
 
 const Page = async ({ params }: { params: { id: string } }) => {
     const supabase = createClient()
-    const { data } = await supabase.from("transaction").select('*,game(image_name,name),payment(name_provider,fee,name)').eq("order_id", params.id).single()
-    const response = await fetch(`https://api.sandbox.midtrans.com/v2/${params.id}/status`, {
-        headers: {
-            'Authorization': `Basic ${btoa(`${"SB-Mid-server-p5TZQHY6mUJcUlXd0TTvMdLL"}:${""}`)}`,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-    })
+    const [{ data }, response] = await Promise.all([
+        supabase.from("transaction").select('*,game(image_name,name),payment(name_provider,fee,name)').eq("order_id", params.id).single(),
+        fetch(`${process.env.NEXT_PUBLIC_URL}/api/transaction/status/${params.id}`)
+    ])
     const dataStatus = await response.json()
 
-
     return (
-        <Transaksi data={data} statusDefault={dataStatus.transaction_status} order_id={params.id}/>
+        <DetailTransaksi data={data} statusDefault={dataStatus.transaction_status} order_id={params.id} />
     );
 }
 

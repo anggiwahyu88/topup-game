@@ -3,13 +3,11 @@
 import Image from "next/image";
 import { useAppDispatch, useAppSelector } from "@/hook/redux";
 import { useEffect, useState } from "react";
-import { addToCheckout } from "@/utils/redux/slice/user/checkoutSlice";
+import { addToCheckout } from "@/context/redux/slice/user/checkoutSlice";
 import { ProductType } from "@/utils/type";
 
 interface IProduct {
-    product: ProductType & {
-        name_image?: string | null;
-    },
+    product: (ProductType & { game_id: number, active: boolean, img_name: string | null }),
     game_id:number
 }
 
@@ -45,9 +43,9 @@ const Card: React.FC<IProduct> = ({ product,game_id }) => {
                 </div>
             </span>
             {
-                product.name_image ?
+                product.img_name ?
                     <div className="relative min-h-8 min-w-8 h-8 w-8">
-                        <Image src={`${process.env.NEXT_PUBLIC_IMAGE_URL}logo/${product.name_image}`} fill alt={"sdaa"} sizes="2rem" />
+                        <Image src={`${process.env.NEXT_PUBLIC_IMAGE_URL}logo/${product.img_name}`} fill alt={"sdaa"} sizes="2rem" />
                     </div>
                     : ""
             }
